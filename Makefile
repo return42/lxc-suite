@@ -15,8 +15,9 @@ test: test.sh
 
 test.sh:
 	@echo "TEST      shellcheck"
-	$(Q)shellcheck -x -s bash .config.sh
-	$(Q)shellcheck -x utils/lxc.sh
-	$(Q)shellcheck -x utils/lxc-dev.env
+	$(Q)shellcheck -x -f gcc -s bash .config.sh
+	$(Q)shellcheck -x -f gcc synapse.env
+	$(Q)shellcheck -x -f gcc utils/lxc.sh
+	$(Q)shellcheck -x -f gcc utils/lxc-dev.env
 
 .PHONY: $(PHONY)
