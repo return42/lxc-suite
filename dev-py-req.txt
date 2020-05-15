@@ -1,0 +1,5 @@
+# -*- coding: utf-8; mode: conf -*-
+#
+# python requirements of the utils/lxc-dev.env suite
+
+ptpython

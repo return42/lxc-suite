@@ -1,0 +1,7 @@
+# -*- coding: utf-8; mode: conf -*-
+#
+# python requirements of the synapse suite
+#
+# https://github.com/matrix-org/synapse/blob/master/INSTALL.md#installing-from-source
+
+matrix-synapse
