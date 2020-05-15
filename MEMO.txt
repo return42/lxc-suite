@@ -1,0 +1,10 @@
+[synapse] (re-) installing from source (useradd, create_pyenv)
+
+to run bash from new created login use::
+
+  sudo -H ./utils/lxc.sh cmd synapse-archlinux sudo -u synapse -i ls -la
+
+- https://github.com/matrix-org/synapse/blob/master/INSTALL.md#installing-from-source
+
+Signed-off-by: Markus Heiser <markus.heiser@darmarit.de>
+
