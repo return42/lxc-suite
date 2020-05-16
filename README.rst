@@ -48,31 +48,64 @@ In the containers, you can run what ever you want, e.g. to start a bash use::
 If there comes the time you want to **get rid off all** the containers and
 **clean up local images** just type::
 
-    $ ./lxc.sh remove
-    $ ./lxc.sh remove images
+    $ ./lxc remove
+    $ ./lxc remove images
 
+
+.. _makefile.include:
 
 Makefile
 ========
 
-There is also a wrapper for Makefile environment::
+There is also a wrapper for *Makefile* environment::
 
     include utils/makefile.include
 
-By example::
+The file is already included in the local ``./Makefile``.  By example; this is
+what you see when running ``make`` on the HOST system::
 
     $ make
     targets:
-      test - run tests
+      ...
     options:
-      make V=0|1 [targets] 0 => quiet build (default), 1 => verbose build
-      make V=2   [targets] 2 => give reason for rebuild of target
+      ...
 
-    $ sudo -H ./utils/lxc.sh cmd dev-archlinux make
+Inside the container you will find an additional ``LXC: running in container
+LXC_ENV_FOLDER=`` message::
+
+    $ ./lxc cmd dev-archlinux make
+    INFO:  [dev-archlinux] make
     targets:
-      test - run tests
+      ...
     options:
-    LXC: running in container LXC_ENV_FOLDER=lxc/dev-archlinux/
-      make V=0|1 [targets] 0 => quiet build (default), 1 => verbose build
-      make V=2   [targets] 2 => give reason for rebuild of target
+      LXC: running in container LXC_ENV_FOLDER=lxc-env/dev-archlinux/
+      ...
+    INFO:  [dev-archlinux] exit code (0) from make
+
+
+``LXC_ENV_FOLDER``
+==================
+
+The environment variable ``LXC_ENV_FOLDER`` is a relative path name.  The
+default is::
+
+    LXC_ENV_FOLDER="lxc-env/$(hostname)/"
+
+but only in containers, on the HOST system, the environment is **unset
+(empty string)**::
+
+    LXC_ENV_FOLDER=
+
+The value is available in `Makefiles (including makefile.include)
+<makefile.include>`_::
+
+    include utils/makefile.include
+    ...
+    BUILD_FOLDER=$(LXC_ENV_FOLDER)build/
+
+In bash scripts *source* the bash library::
+
+    source utils/lib.sh
+    ...
+    echo "build OK" > $(LXC_ENV_FOLDER)build/status.txt
 
