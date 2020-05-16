@@ -52,8 +52,6 @@ If there comes the time you want to **get rid off all** the containers and
     $ ./lxc remove images
 
 
-.. _makefile.include:
-
 Makefile
 ========
 
@@ -86,7 +84,7 @@ LXC_ENV_FOLDER=`` message::
 ``LXC_ENV_FOLDER``
 ==================
 
-The environment variable ``LXC_ENV_FOLDER`` is a relative path name.  The
+The environment variable ``LXC_ENV_FOLDER`` is a **relative path** name.  The
 default is::
 
     LXC_ENV_FOLDER="lxc-env/$(hostname)/"
@@ -96,16 +94,24 @@ but only in containers, on the HOST system, the environment is **unset
 
     LXC_ENV_FOLDER=
 
-The value is available in `Makefiles (including makefile.include)
-<makefile.include>`_::
+The value is available in a Makefile_ by including ``makefile.include``::
 
     include utils/makefile.include
     ...
-    BUILD_FOLDER=$(LXC_ENV_FOLDER)build/
+    BUILD_FOLDER=build/$(LXC_ENV_FOLDER)
+
+This evaluates to::
+
+    HOST                     --> BUILD_FOLDER=build/
+    container: dev-archlinux --> BUILD_FOLDER=build/lxc-env/dev-archlinux/
 
 In bash scripts *source* the bash library::
 
     source utils/lib.sh
     ...
-    echo "build OK" > $(LXC_ENV_FOLDER)build/status.txt
+    echo "build OK" > build/$(LXC_ENV_FOLDER)status.txt
 
+This evaluates to::
+
+    HOST                     --> echo "build OK" > build/status.txt
+    container: dev-archlinux --> echo "build OK" > build/lxc-env/dev-archlinux/status.txt
