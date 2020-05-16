@@ -2,21 +2,24 @@
 LXC suites
 ==========
 
-Managing LXC more comfortable in suites.  To get in use of LXC suite, lxd needs
-to be installed on the HOST system first.
+Managing LXC more comfortable in *suites*.  To get in use of *LXC suites*, lxd
+needs to be installed on the HOST system first::
+
+    $ sudo -H snap install lxd
+    $ sudo -H lxd init --auto
 
 For usage run::
 
     ./lxc --help
 
-To create your own LXC suite copy the default suite from ``./dev.env`` into
+To create your own LXC suite, copy the default suite from ``./dev.env`` into
 ``./my-suite.env``.
 
 To make use of the containers from the *suite*, you have to build the containers
 initial.  But be warned, **this might take some time**::
 
     # build default dev.env suite
-    $ ./lxc
+    $ ./lxc build
 
     # build my-suite.env
     $ LXC_ENV=./my-suite.env ./lxc build
@@ -31,8 +34,10 @@ container shares the root folder of the repository and the command
 ``./lxc.sh cmd`` **handles relative path names transparent**, compare output
 of::
 
-    $ ./lxc cmd dev-archlinux ls -la README.rst
-    INFO:  [dev-archlinux] ls -la README.rst
+    $ ./lxc cmd dev-archlinux 'echo "inside container: $(date)" > $(hostname).out'
+    ...
+    $ cat dev-archlinux.out
+    inside container: Sat May 16 12:36:30 UTC 2020
 
 In the containers, you can run what ever you want, e.g. to start a bash use::
 
