@@ -26,7 +26,7 @@ lxc_suite_install_info() {
     (
         lxc_set_suite_env
         cat <<EOF
-LXC suite: ${LXC_SUITE_NAME} --> ${PUBLIC_URL}
+LXC suite: ${LXC_SUITE_NAME} -- ${PUBLIC_URL:-...}
 suite images:
 $(echo "  ${LOCAL_IMAGES[*]}" | $FMT)
 suite containers:
@@ -100,4 +100,35 @@ EOF
 pip install --upgrade pip
 pip install wheel
 EOF
+}
+
+suite_main_install(){
+    (
+        [[ -z $1 ]] && echo "ERROR: missing argument: <image-name>" >&2 && exit 42
+        container="$LXC_HOST_PREFIX-$1"
+        sudo -H "LXC_ENV=$LXC_ENV" "${REPO_ROOT}/utils/lxc.sh" build "$container"
+        sudo -H "LXC_ENV=$LXC_ENV" "${REPO_ROOT}/utils/lxc.sh" install suite "$container"
+    )
+}
+
+suite_main_remove(){
+    (
+        [[ -z $1 ]] && echo "ERROR: missing argument: <image-name>" >&2 && exit 42
+        container="$LXC_HOST_PREFIX-$1"
+        sudo -H "LXC_ENV=$LXC_ENV" "${REPO_ROOT}/utils/lxc.sh" remove "$container"
+    )
+}
+
+suite_main_cmd(){
+    (
+        [[ -z $1 ]] && echo "ERROR: missing argument: <image-name>" >&2 && exit 42
+        container="$LXC_HOST_PREFIX-$1"; shift
+        if ! lxc_exists "$container";then
+            err_msg "container ** $container ** does not yet exists"
+            exit 42
+        fi
+        sudo -H "LXC_ENV=$LXC_ENV" "${REPO_ROOT}/utils/lxc.sh" \
+             cmd "$container" sudo -u "${SERVICE_USER:-root}" -i bash -c \""$*"\"
+
+    )
 }

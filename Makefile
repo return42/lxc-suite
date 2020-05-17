@@ -16,9 +16,10 @@ test: test.sh
 test.sh:
 	@echo "TEST      shellcheck"
 	$(Q)shellcheck -x -f gcc -s bash .config.sh
+	$(Q)shellcheck -x -f gcc suite
 	$(Q)shellcheck -x -f gcc lxc
 	$(Q)shellcheck -x -f gcc dev.env
-	$(Q)shellcheck -x -f gcc default.env
+	$(Q)shellcheck -x -f gcc base-env
 	$(Q)shellcheck -x -f gcc synapse.env
 	$(Q)shellcheck -x -f gcc utils/lxc.sh
 

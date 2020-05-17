@@ -8,12 +8,84 @@ needs to be installed on the HOST system first::
     $ sudo -H snap install lxd
     $ sudo -H lxd init --auto
 
+If you are in a hurry and just want to *play* with suites, install the
+*developer suite* into a archlinux container::
+
+    $ ./dev install archlinux
+
+To start a bash in the container which we have just created use::
+
+    $ ./dev archlinux bash
+
+Or start any other command::
+
+    $ ./dev archlinux pwd
+
+    INFO:  [dev-archlinux] export LXC_ENV=/share/lxc-suite/dev.env
+    INFO:  [dev-archlinux] sudo -u dev-user -i bash -c "pwd"
+    /usr/local/dev-user
+    INFO:  [dev-archlinux] exit code (0) from sudo -u dev-user -i bash -c "pwd"
+
+.. _suite:
+
+``./suite``
+===========
+
+The ``./lxc`` command implements all the basic LXC commands to work with
+lxc-suites (*lxc-suite's porcelain*).  For the work in context of a *suite*
+there is another bash script named: ``./suite``::
+
+    $ ./suite --help
+    usage::
+      suite <suite-name> <image-name> install
+      suite <suite-name> <image-name> remove
+      suite <suite-name> <image-name> [command ...]
+    ...
+    LXC suites:
+      dev synapse ...
+
+Mostly you will run the *suite* command by using one of the wrapper.  To
+**install** the **dev project** into a **archlinux** image use the ``./dev``
+wrapper::
+
+    $ ./dev archlinux install
+
+Please note; the image name is ``archlinux`` while the container name is
+``synapse-archlinux``.  The **dev project** from the example above created a
+system user (account ``dev-user``).  To get an interactive shell for this user in
+the ``dev-archlinux`` container use::
+
+    $ ./dev archlinux bash
+    INFO:  [dev-archlinux] export LXC_ENV=/share/lxc-suite/dev.env
+    INFO:  [dev-archlinux] sudo -u dev-user -i bash -c "bash"
+    [dev-user@dev-archlinux ~]$ pwd
+    /usr/local/dev-user
+    [dev-user@dev-archlinux ~]$ exit 42
+    exit
+    WARN:  [dev-archlinux] exit code (42) from sudo -u dev-user -i bash -c "bash"
+
+.. create suite:
+
+creating a new suite
+====================
+
+To create your own LXC suite, copy the *developer* suite from ``./dev.env`` into
+``./my-suite.env`` and edit it to your needs.  For convenience create a wrapper
+``/my-suite``.::
+
+    $ cp ./dev.env ./my-suite.env
+    $ cp ./dev ./my-suite
+    $ $EDITOR ./my-suite.env
+
+
+.. _lxc:
+
+``./lxc``
+=========
+
 For usage run::
 
     ./lxc --help
-
-To create your own LXC suite, copy the default suite from ``./dev.env`` into
-``./my-suite.env``.
 
 To make use of the containers from the *suite*, you have to build the containers
 initial.  But be warned, **this might take some time**::
@@ -24,8 +96,8 @@ initial.  But be warned, **this might take some time**::
     # build my-suite.env
     $ LXC_ENV=./my-suite.env ./lxc build
 
-Alternatively you can set the ``LXC_ENV`` variable in the ``./.config.sh``.  To
-run a command in all containers of the suite use ``cmd``::
+Alternatively you can run the more convenient command: suite_.  To run a command
+in all containers of the suite use ``cmd``::
 
     ./lxc cmd -- ls -la README.rst
 
@@ -51,6 +123,8 @@ If there comes the time you want to **get rid off all** the containers and
     $ ./lxc remove
     $ ./lxc remove images
 
+
+.. _Makefile:
 
 Makefile
 ========
@@ -80,6 +154,8 @@ LXC_ENV_FOLDER=`` message::
       ...
     INFO:  [dev-archlinux] exit code (0) from make
 
+
+.. _LXC_ENV_FOLDER:
 
 ``LXC_ENV_FOLDER``
 ==================
