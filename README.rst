@@ -4,6 +4,12 @@
 LXC suites
 ==========
 
+.. figure:: https://raw.githubusercontent.com/return42/lxc-suite/master/utils/lxc_logo.png
+   :target: https://return42.github.io/lxc-suite/
+   :alt: LXC suites
+   :width: 30%
+   :align: left
+
 |License|
 |Issues|
 |PR|
@@ -15,12 +21,6 @@ LXC suites
    :depth: 2
    :local:
    :backlinks: entry
-
-.. figure:: https://raw.githubusercontent.com/return42/lxc-suite/master/utils/lxc_logo.png
-   :target: https://return42.github.io/lxc-suite/
-   :alt: LXC suites
-   :width: 30%
-   :align: right
 
 ----
 
