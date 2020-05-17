@@ -1,6 +1,28 @@
+.. SPDX-License-Identifier: GNU General Public License v3.0 or later
+
 ==========
 LXC suites
 ==========
+
+|License|
+|Issues|
+|PR|
+|commits|
+
+----
+
+.. contents:: Contents
+   :depth: 2
+   :local:
+   :backlinks: entry
+
+.. figure:: https://raw.githubusercontent.com/return42/lxc-suite/utils/lxc_logo.png
+   :target: https://return42.github.io/lxc-suite/
+   :alt: LXC suites
+   :width: 30%
+   :align: right
+
+----
 
 Managing LXC more comfortable in *suites*.  To get in use of *LXC suites*, lxd
 needs to be installed on the HOST system first::
@@ -8,7 +30,7 @@ needs to be installed on the HOST system first::
     $ sudo -H snap install lxd
     $ sudo -H lxd init --auto
 
-If you are in a hurry and just want to *play* with suites, install the
+If you are in a hurry and just want to *play* with LXC suites, install the
 *developer suite* into a archlinux container::
 
     $ ./dev install archlinux
@@ -25,6 +47,7 @@ Or start any other command::
     INFO:  [dev-archlinux] sudo -u dev-user -i bash -c "pwd"
     /usr/local/dev-user
     INFO:  [dev-archlinux] exit code (0) from sudo -u dev-user -i bash -c "pwd"
+
 
 .. _suite:
 
@@ -198,3 +221,22 @@ This evaluates to::
 
     HOST                     --> echo "build OK" > build/status.txt
     container: dev-archlinux --> echo "build OK" > build/lxc-env/dev-archlinux/status.txt
+
+
+----
+
+|gluten free|
+
+.. |gluten free| image:: https://forthebadge.com/images/featured/featured-gluten-free.svg
+
+.. |License| image:: https://img.shields.io/github/license/return42/lxc-suite?style=plastic
+   :target: https://github.com/return42/lxc-suite/blob/master/LICENSE
+
+.. |Issues| image:: https://img.shields.io/github/issues/return42/lxc-suite?color=yellow&label=issues
+   :target: https://github.com/return42/lxc-suite/issues
+
+.. |PR| image:: https://img.shields.io/github/issues-pr-raw/return42/lxc-suite?color=yellow&label=PR
+   :target: https://github.com/return42/lxc-suite/pulls
+
+.. |commits| image:: https://img.shields.io/github/commit-activity/y/return42/lxc-suite?color=yellow&label=commits
+   :target: https://github.com/return42/lxc-suite/commits/master
