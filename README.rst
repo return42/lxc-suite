@@ -64,6 +64,13 @@ the ``dev-archlinux`` container use::
     exit
     WARN:  [dev-archlinux] exit code (42) from sudo -u dev-user -i bash -c "bash"
 
+To evaluate variables in the container use single quotation marks::
+
+  $ ./dev archlinux 'echo $(hostname)'
+  ...
+  dev-archlinux
+
+
 .. create suite:
 
 creating a new suite

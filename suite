@@ -10,13 +10,15 @@ for file in "${REPO_ROOT}"/*.env; do
     LXC_SUITES+=("${file%.*}")
 done
 
+_suite_name="<suite_name>"
+
 suite_usage() {
     _cmd="$(basename "$0")"
     cat <<EOF
 usage::
-  $_cmd <suite-name> <image-name> create
-  $_cmd <suite-name> <image-name> drop
-  $_cmd <suite-name> <image-name> [command ..]
+  $_cmd $_suite_name <image-name> create
+  $_cmd $_suite_name <image-name> drop
+  $_cmd $_suite_name <image-name> [command ..]
 
 create:    build container from <image-name> and install <suite-name>
 drop:      delete container <image-name> of <suite-name>
@@ -52,13 +54,15 @@ _load_lib(){
 suite_main() {
 
     case $1 in
-        ''|-h|--help)
-            _load_lib
-            suite_usage
-            exit
+        ''|-h|--help) _load_lib; suite_usage;  exit
         ;;
     esac
-    _init_suite "$1"; shift
+    _suite_name="$1"; shift
+    _init_suite "$_suite_name"
+    case $1 in
+        ''|-h|--help) _load_lib; suite_usage;  exit
+        ;;
+    esac
     image="$1"; shift
 
     case $1 in
