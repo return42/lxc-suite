@@ -143,6 +143,7 @@ main() {
     fi
 
     case $1 in
+        --source)  ;;
         --getenv)  var="$2"; echo "${!var}"; exit 0;;
         -h|--help) usage; exit 0;;
 
@@ -192,7 +193,7 @@ main() {
                 suite)
                     case $3 in
                         ${LXC_HOST_PREFIX}-*)
-                            lxc exec -t "$3" -- "${LXC_REPO_ROOT}/utils/lxc.sh" __show suite \
+                            lxc_exec_cmd "$3" "${LXC_REPO_ROOT}/utils/lxc.sh" __show suite \
                                 | prefix_stdout "[${_BBlue}$3${_creset}]  "
                         ;;
                         *) show_suite;;
@@ -418,7 +419,7 @@ show_suite(){
         if ! lxc_exists "$i"; then
             warn_msg "container ${_BBlue}$i${_creset} does not yet exists"
         else
-            lxc exec -t "${i}" -- "${LXC_REPO_ROOT}/utils/lxc.sh" __show suite \
+            lxc_exec_cmd "${i}" "${LXC_REPO_ROOT}/utils/lxc.sh" __show suite \
                 | prefix_stdout "[${_BBlue}${i}${_creset}]  "
             echo
         fi
@@ -440,8 +441,9 @@ lxc_exec_cmd() {
     local name="$1"
     shift
     exit_val=
+    info_msg "[${_BBlue}${name}${_creset}] ${_BGreen}export LXC_ENV=$LXC_ENV${_creset}"
     info_msg "[${_BBlue}${name}${_creset}] ${_BGreen}${*}${_creset}"
-    lxc exec -t --cwd "${LXC_REPO_ROOT}" "${name}" -- bash -c "$*"
+    lxc exec -t --env "LXC_ENV=$LXC_ENV" --cwd "${LXC_REPO_ROOT}" "${name}" -- bash -c "$*"
     exit_val=$?
     if [[ $exit_val -ne 0 ]]; then
         warn_msg "[${_BBlue}${name}${_creset}] exit code (${_BRed}${exit_val}${_creset}) from ${_BGreen}${*}${_creset}"
@@ -530,7 +532,8 @@ lxc_install_boilerplate() {
     fi
     lxc_init_container_env "${container_name}"
     info_msg "[${_BBlue}${container_name}${_creset}] install /.lxcenv.mk .."
-    cat <<EOF | lxc exec "${container_name}" -- bash | prefix_stdout "[${_BBlue}${container_name}${_creset}] "
+    cat <<EOF | lxc exec --env "LXC_ENV=$LXC_ENV" "${container_name}" -- bash \
+        | prefix_stdout "[${_BBlue}${container_name}${_creset}] "
 rm -f "/.lxcenv.mk"
 ln -s "${LXC_REPO_ROOT}/utils/makefile.lxc" "/.lxcenv.mk"
 ls -l "/.lxcenv.mk"
@@ -542,7 +545,7 @@ EOF
     fi
     if [[ -n "${boilerplate_script}" ]]; then
         echo "${boilerplate_script}" \
-            | lxc exec "${container_name}" -- bash \
+            | lxc exec --env "LXC_ENV=$LXC_ENV" "${container_name}" -- bash \
             | prefix_stdout "[${_BBlue}${container_name}${_creset}] "
     fi
 }
