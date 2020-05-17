@@ -16,7 +16,7 @@ LXC suites
    :local:
    :backlinks: entry
 
-.. figure:: https://raw.githubusercontent.com/return42/lxc-suite/utils/lxc_logo.png
+.. figure:: https://raw.githubusercontent.com/return42/lxc-suite/master/utils/lxc_logo.png
    :target: https://return42.github.io/lxc-suite/
    :alt: LXC suites
    :width: 30%
