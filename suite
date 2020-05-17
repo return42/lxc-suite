@@ -14,12 +14,12 @@ suite_usage() {
     _cmd="$(basename "$0")"
     cat <<EOF
 usage::
-  $_cmd <suite-name> <image-name> install
-  $_cmd <suite-name> <image-name> remove
+  $_cmd <suite-name> <image-name> create
+  $_cmd <suite-name> <image-name> drop
   $_cmd <suite-name> <image-name> [command ..]
 
-install:   build container from <image-name> and install <suite-name>
-remove:    delete container <image-name> of <suite-name>
+create:    build container from <image-name> and install <suite-name>
+drop:      delete container <image-name> of <suite-name>
 command:   execute [command ..] in container <image-name> from <suite-name>
 EOF
     echo "LXC suites:"
@@ -62,11 +62,17 @@ suite_main() {
     image="$1"; shift
 
     case $1 in
-        install)
-            suite_main_install "$image"
+        create)
+            suite_main_create "$image"
             ;;
-        remove)
-            suite_main_remove "$image"
+        drop)
+            suite_main_drop "$image"
+            ;;
+        pkg-install)
+            sudo -H -i <<EOF
+source "${REPO_ROOT}/utils/lib.sh"
+pkg_install "$@"
+EOF
             ;;
         *)
             [[ -z $image ]] && echo "ERROR: missing argument: <image-name>" >&2 && exit 42

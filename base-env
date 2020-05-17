@@ -102,7 +102,7 @@ pip install wheel
 EOF
 }
 
-suite_main_install(){
+suite_main_create(){
     (
         [[ -z $1 ]] && echo "ERROR: missing argument: <image-name>" >&2 && exit 42
         container="$LXC_HOST_PREFIX-$1"
@@ -111,7 +111,7 @@ suite_main_install(){
     )
 }
 
-suite_main_remove(){
+suite_main_drop(){
     (
         [[ -z $1 ]] && echo "ERROR: missing argument: <image-name>" >&2 && exit 42
         container="$LXC_HOST_PREFIX-$1"

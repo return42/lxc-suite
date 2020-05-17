@@ -37,22 +37,22 @@ there is another bash script named: ``./suite``::
 
     $ ./suite --help
     usage::
-      suite <suite-name> <image-name> install
-      suite <suite-name> <image-name> remove
+      suite <suite-name> <image-name> create
+      suite <suite-name> <image-name> drop
       suite <suite-name> <image-name> [command ...]
     ...
     LXC suites:
       dev synapse ...
 
 Mostly you will run the *suite* command by using one of the wrapper.  To
-**install** the **dev project** into a **archlinux** image use the ``./dev``
+**install** the **dev suite** into a **archlinux** image use the ``./dev``
 wrapper::
 
-    $ ./dev archlinux install
+    $ ./dev archlinux create
 
 Please note; the image name is ``archlinux`` while the container name is
-``synapse-archlinux``.  The **dev project** from the example above created a
-system user (account ``dev-user``).  To get an interactive shell for this user in
+``dev-archlinux``.  The **dev suite** from the example above has created a
+system account (``dev-user``).  To get an interactive bash for this account in
 the ``dev-archlinux`` container use::
 
     $ ./dev archlinux bash
