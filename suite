@@ -16,11 +16,11 @@ suite_usage() {
 usage::
   $_cmd <suite-name> <image-name> install
   $_cmd <suite-name> <image-name> remove
-  $_cmd <suite-name> <image-name> [command ...]
+  $_cmd <suite-name> <image-name> [command ..]
 
-install     :  build container from <image-name> and install <suite-name>
-remove      :   delete container <image-name> of <suite-name>
-command ... :  execute command in container <image-name> from <suite-name>
+install:   build container from <image-name> and install <suite-name>
+remove:    delete container <image-name> of <suite-name>
+command:   execute [command ..] in container <image-name> from <suite-name>
 EOF
     echo "LXC suites:"
     echo "  ${LXC_SUITES[*]}" | $FMT
@@ -35,6 +35,10 @@ _init_suite(){
     LXC_ENV="${REPO_ROOT}/$1.env"
     [[ ! -e $LXC_ENV ]] && echo "ERROR: lxc suite does not exists: ${LXC_ENV}" >&2 && exit 42
     export LXC_ENV
+    if [[ $LXC_ENV != $("${REPO_ROOT}/utils/lxc.sh" --getenv LXC_ENV) ]];then
+        _load_lib
+        die 42 "LXC_ENV in subprocess is different!"
+    fi
     # shellcheck source=utils/lxc.sh
     source "${REPO_ROOT}/utils/lxc.sh" --source
 }
