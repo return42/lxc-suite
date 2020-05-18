@@ -4,18 +4,20 @@
 LXC suites
 ==========
 
-+-------------------+----------------------+
-|                   |                      |
-| Managing LXC more | |lxc-suite logo|     |
-| comfortable in    |                      |
-| *suites*.         |                      |
-|                   |                      |
-| - |License|       |                      |
-| - |Issues|        |                      |
-| - |PR|            |                      |
-| - |commits|       |                      |
-|                   |                      |
-+-------------------+----------------------+
+  **Managing LXC more comfortable in suites**
+
++------------------------+----------------------+
+|                        |                      |
+| |License|  |Issues|    | |lxc-suite logo|     |
+| |PR|  |commits|        |                      |
+|                        |                      |
+| - suite_               |                      |
+| - `create suite`_      |                      |
+| - lxc_                 |                      |
+| - Makefile_            |                      |
+| - LXC_ENV_FOLDER_      |                      |
+|                        |                      |
++------------------------+----------------------+
 
 .. contents:: Contents
    :depth: 2
