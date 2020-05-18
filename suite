@@ -88,11 +88,13 @@ suite_main() {
     sudo_or_exit
 
     container="$LXC_HOST_PREFIX-$_image_name"
-    if ! lxc_exists "$container";then
-        err_msg "container ** $container ** does not yet exists"
-        exit 42
-    fi
-
+    case $1 in
+        drop|root|pkg-*)
+            if ! lxc_exists "$container";then
+                err_msg "container ** $container ** does not yet exists"
+                exit 42
+            fi
+    esac
     case $1 in
         create)
             suite_main_create "$_image_name"
