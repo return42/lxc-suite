@@ -103,23 +103,29 @@ Predefined suites
 
 ``./dev`` : ubu2004, fedora31, archlinux
   Suite that assembles a developer environment, useful as template or for
-  DevOps prototyping.
+  DevOps prototyping.::
+
+    ./dev archlinux create
 
   Creates system account ``dev-user`` and builds a python virtualenv
   ``~/dev-user/pyenv`` with requirements dev-py-req_ installed .
 
-  - ptpython_
+  - ptpython_ -- usage: ``./dev archlinux ptpython``
+  - bash (``dev-user``) -- usage: ``./dev archlinux bash``
 
 
 .. _synapse-py-req: https://github.com/return42/lxc-suite/blob/master/synapse-py-req.txt
 .. _synapse: https://github.com/matrix-org/synapse
 
 ``./synapse`` : *WIP*
-  Suite for prototyping with a synapse_ *homeserver*.
+  Suite for prototyping with a synapse_ *homeserver*.::
+
+    ./dev archlinux create
 
   Creates system account ``synapse`` and builds a python virtualenv
   ``~/synapse/pyenv`` with requirements from synapse-py-req_ installed.
 
+  - bash (``synapse``) -- usage: ``./dev archlinux bash``
 
 .. _create new suites:
 
