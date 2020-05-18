@@ -4,25 +4,16 @@
 LXC suites
 ==========
 
-.. figure:: https://raw.githubusercontent.com/return42/lxc-suite/master/utils/lxc_logo.png
-   :target: https://return42.github.io/lxc-suite/
-   :alt: LXC suites
-   :width: 30%
-   :align: left
+|License|  |Issues|  |PR|  |commits|
 
-|License|
-|Issues|
-|PR|
-|commits|
-
-----
-
-.. contents:: Contents
-   :depth: 2
-   :local:
-   :backlinks: entry
-
-----
++-------------------------+----------------------+
+|                         |                      |
+| .. contents:: Contents  | |lxc-suite logo|     |
+|    :depth: 2            |                      |
+|    :local:              |                      |
+|    :backlinks: entry    |                      |
+|                         |                      |
++-------------------------+----------------------+
 
 Managing LXC more comfortable in *suites*.  To get in use of *LXC suites*, lxd
 needs to be installed on the HOST system first::
@@ -240,3 +231,8 @@ This evaluates to::
 
 .. |commits| image:: https://img.shields.io/github/commit-activity/y/return42/lxc-suite?color=yellow&label=commits
    :target: https://github.com/return42/lxc-suite/commits/master
+
+.. |lxc-suite logo| image:: https://raw.githubusercontent.com/return42/lxc-suite/master/utils/lxc_logo.png
+   :target: https://return42.github.io/lxc-suite/
+   :alt: LXC suites
+   :width: 30%
