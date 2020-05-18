@@ -1,22 +1,29 @@
 .. SPDX-License-Identifier: GNU General Public License v3.0 or later
 
 ==========
-LXC suites
+
 ==========
 
-|License|  |Issues|  |PR|  |commits|
++-----------------+----------------------+
+|                 |                      |
+| |License|       | |lxc-suite logo|     |
+|                 |                      |
+| |Issues|        | LXC suites           |
+|                 |                      |
+| |PR|            | Managing LXC more    |
+|                 | comfortable in       |
+| |commits|       |  *suites*.           |
+|                 |                      |
++-----------------+----------------------+
 
-+-------------------------+----------------------+
-|                         |                      |
-| .. contents:: Contents  | |lxc-suite logo|     |
-|    :depth: 2            |                      |
-|    :local:              |                      |
-|    :backlinks: entry    |                      |
-|                         |                      |
-+-------------------------+----------------------+
+.. contents:: Contents
+   :depth: 2
+   :local:
+   :backlinks: entry
 
-Managing LXC more comfortable in *suites*.  To get in use of *LXC suites*, lxd
-needs to be installed on the HOST system first::
+
+To get in use of *LXC suites*, lxd needs to be installed on the HOST system
+first::
 
     $ sudo -H snap install lxd
     $ sudo -H lxd init --auto
