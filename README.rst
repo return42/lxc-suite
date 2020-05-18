@@ -8,11 +8,7 @@ LXC suites
 
 ----
 
-|lxc-suite logo|
-
-----
-
-|License|  |Issues|  |PR|  |commits|
+|lxc-suite logo|  |License|  |Issues|  |PR|  |commits|
 
 ----
 
