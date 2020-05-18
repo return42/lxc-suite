@@ -4,11 +4,15 @@
 LXC suites
 ==========
 
+----
+
 **Managing LXC more comfortable in suites**
 
 ----
 
-|License|  |Issues|  |PR|  |commits|  |lxc-suite logo|
+|License|
+
+|Issues|  |PR|  |commits|  |lxc-suite logo|
 
 ----
 
