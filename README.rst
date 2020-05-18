@@ -10,9 +10,9 @@ LXC suites
 
 ----
 
-|License|
+|lxc-suite logo|
 
-|Issues|  |PR|  |commits|  |lxc-suite logo|
+|License| |Issues|  |PR|  |commits|
 
 ----
 
