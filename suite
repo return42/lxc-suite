@@ -19,10 +19,19 @@ usage::
   $_cmd $_suite_name <image-name> create
   $_cmd $_suite_name <image-name> drop
   $_cmd $_suite_name <image-name> [command ..]
+  $_cmd $_suite_name <image-name> pkg-install [pkg-name ..]
+  $_cmd $_suite_name <image-name> root
 
-create:    build container from <image-name> and install <suite-name>
-drop:      delete container <image-name> of <suite-name>
-command:   execute [command ..] in container <image-name> from <suite-name>
+create:
+  build container from <image-name> and install <suite-name>
+drop:
+  delete container <image-name> of <suite-name>
+[command ..]:
+  execute [command ..] in container <image-name> from <suite-name>
+pkg-install [pkg-name ..]:
+  install packages [pkg-name ..] into suite container by <image-name>
+root:
+  start a bash for user root in the container
 EOF
     echo "LXC suites:"
     echo "  ${LXC_SUITES[*]}" | $FMT
@@ -63,7 +72,15 @@ suite_main() {
         ''|-h|--help) _load_lib; suite_usage;  exit
         ;;
     esac
+
     image="$1"; shift
+    [[ -z $image ]] && echo "ERROR: missing argument: <image-name>" >&2 && exit 42
+    container="$LXC_HOST_PREFIX-$image"
+    if ! lxc_exists "$container";then
+        err_msg "container ** $container ** does not yet exists"
+        exit 42
+    fi
+    sudo_or_exit
 
     case $1 in
         create)
@@ -72,11 +89,13 @@ suite_main() {
         drop)
             suite_main_drop "$image"
             ;;
+        root)
+            shift
+            lxc_exec_cmd "$container" 'bash'
+            ;;
         pkg-install)
-            sudo -H -i <<EOF
-source "${REPO_ROOT}/utils/lib.sh"
-pkg_install "$@"
-EOF
+            shift
+            lxc_exec_cmd "$container" 'source "./utils/lib.sh"; pkg_install' "$@"
             ;;
         *)
             [[ -z $image ]] && echo "ERROR: missing argument: <image-name>" >&2 && exit 42

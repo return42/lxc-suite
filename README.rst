@@ -42,7 +42,7 @@ Or start any other command::
 
     $ ./dev archlinux pwd
 
-    INFO:  [dev-archlinux] export LXC_ENV=/share/lxc-suite/dev.env
+    INFO:  [dev-archlinux] export LXC_ENV=./dev.env
     INFO:  [dev-archlinux] sudo -u dev-user -i bash -c "pwd"
     /usr/local/dev-user
     INFO:  [dev-archlinux] exit code (0) from sudo -u dev-user -i bash -c "pwd"
@@ -88,9 +88,25 @@ the ``dev-archlinux`` container use::
 
 To evaluate variables in the container use single quotation marks::
 
-  $ ./dev archlinux 'echo $(hostname)'
-  ...
-  dev-archlinux
+    $ ./dev archlinux 'echo $(hostname)'
+    ...
+    dev-archlinux
+
+To get a bash for container's root login use::
+
+    $ ./dev archlinux root
+    INFO:  [dev-archlinux] export LXC_ENV=./dev.env
+    INFO:  [dev-archlinux] bash
+    [root@dev-archlinux lxc-suite]# pwd
+    /share/lxc-suite
+
+To install packages from distribution's package manager (pacman, dnf, apt) into
+a container, use command ``pkg-install``.  For example, to install the popular
+editor emacs, type the following::
+
+   $ ./dev archlinux pkg-install emacs-nox
+   ...
+   $ ./dev archlinux emacs .
 
 
 .. _predefined suites:
