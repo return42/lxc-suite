@@ -6,12 +6,10 @@ LXC suites
 
 +---------------------------------------------+----------------------+
 |                                             |                      |
-| **Managing LXC more comfortable in suites** | |lxc-suite logo|     |
-|                                             |                      |
-| | |License|                                 |                      |
-| | |Issues|                                  |                      |
-| | |PR|                                      |                      |
-| | |commits|                                 |                      |
+| **Managing LXC more comfortable in suites** | | |License|          |
+|                                             | | |Issues|           |
+| |lxc-suite logo|                            | | |PR|               |
+|                                             | | |commits|          |
 |                                             |                      |
 +---------------------------------------------+----------------------+
 
