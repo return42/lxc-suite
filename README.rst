@@ -6,18 +6,14 @@ LXC suites
 
 +---------------------------------------------+----------------------+
 |                                             |                      |
-| **Managing LXC more comfortable in suites** | |lxc-suite logo|     |
-|                                             |                      |
 | |License|  |Issues|  |PR|  |commits|        |                      |
 |                                             |                      |
-| |contents|                                  |                      |
+| **Managing LXC more comfortable in suites** | |lxc-suite logo|     |
+|                                             |                      |
+| .. contents:: Content                       |                      |
 |                                             |                      |
 +---------------------------------------------+----------------------+
 
-.. |contents| contents:: Contents
-   :depth: 2
-   :local:
-   :backlinks: entry
 
 To get in use of *LXC suites*, lxd needs to be installed on the HOST system
 first::
