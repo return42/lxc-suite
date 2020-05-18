@@ -8,7 +8,7 @@ LXC suites
 
 ----
 
-|lxc-suite logo|  |License|  |Issues|  |PR|  |commits|
+|License|  |Issues|  |PR|  |commits|  |lxc-suite logo|
 
 ----
 
@@ -237,5 +237,5 @@ This evaluates to::
    :target: https://github.com/return42/lxc-suite/commits/master
 
 .. |lxc-suite logo| image:: https://raw.githubusercontent.com/return42/lxc-suite/master/utils/lxc_logo.png
-   :target: https://return42.github.io/return42/lxc-suite/
+   :target: https://github.com/return42/lxc-suite/blob/master/README.rst
    :alt: LXC suites
