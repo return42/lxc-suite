@@ -14,7 +14,7 @@ LXC_SUITE_IMAGE="<image-name>"
 
 suite_usage() {
     _cmd="$(basename "$0") $LXC_SUITE_NAME $LXC_SUITE_IMAGE"
-    if [[ -n $LXC_SUITE_NAME ]];then
+    if [[ -n $LXC_SUITE_NAME ]]; then
         _cmd="./${LXC_SUITE_NAME} $LXC_SUITE_IMAGE"
     fi
     cat <<EOF
@@ -27,22 +27,25 @@ usage::
   $_cmd root
 
 create:
-  Build container from $LXC_SUITE_IMAGE and install <suite-name>.
+  Build container from image $LXC_SUITE_IMAGE and install suite $LXC_SUITE_NAME.
 drop:
-  Delete container $LXC_SUITE_IMAGE of <suite-name>.
+  Delete container from image $LXC_SUITE_IMAGE (suite $LXC_SUITE_NAME).
 { command .. }:
-  Execute { command .. } as user '${SERVICE_USER:-root}' in container
-  $LXC_SUITE_IMAGE from suite $LXC_SUITE_NAME.
+  Execute { command .. } as user '${SERVICE_USER:-root}' in container $LXC_SUITE_IMAGE
+  from suite $LXC_SUITE_NAME.
 cmd { command .. }:
-  Execute { command .. } in a 'root' bash with './utils/lib.sh' *sourced*.
+  Execute { command .. } in root's bash with './utils/lib.sh'  sourced.
 pkg-install / pkg-remove { pkg-name .. }:
-  Install / remove packages { pkg-name .. } in container $LXC_SUITE_IMAGE
-  from suite <$LXC_SUITE_NAME>.
+  Install / remove packages { pkg-name .. } in container from image
+  $LXC_SUITE_IMAGE (suite $LXC_SUITE_NAME)
 root:
   start a bash for user root in the container
 EOF
-    echo "LXC suites:"
-    echo "  ${LXC_SUITES[*]}" | $FMT
+    if [[ $LXC_SUITE_NAME == "<suite-name>" ]]; then
+        echo "LXC suites:"
+        echo "  ${LXC_SUITES[*]}" | $FMT
+    fi
+
     if [[ -n ${LOCAL_IMAGES[*]} ]]; then
         echo "suite images:"
         echo "  ${LOCAL_IMAGES[*]}" | $FMT
