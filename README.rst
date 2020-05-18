@@ -86,13 +86,13 @@ the ``dev-archlinux`` container use::
     exit
     WARN:  [dev-archlinux] exit code (42) from sudo -u dev-user -i bash -c "bash"
 
-To evaluate variables in the container use single quotation marks::
+To evaluate variables in the container **use single quotation marks**::
 
     $ ./dev archlinux 'echo $(hostname)'
     ...
     dev-archlinux
 
-To get a bash for container's root login use::
+To get a bash for container's **root login** use::
 
     $ ./dev archlinux root
     INFO:  [dev-archlinux] export LXC_ENV=./dev.env
@@ -100,13 +100,25 @@ To get a bash for container's root login use::
     [root@dev-archlinux lxc-suite]# pwd
     /share/lxc-suite
 
-To install packages from distribution's package manager (pacman, dnf, apt) into
-a container, use command ``pkg-install``.  For example, to install the popular
-editor emacs, type the following::
+To **install packages** from distribution's package manager (pacman, dnf, apt)
+into a container, use command ``pkg-install``.  For example, to install the
+popular editor emacs, type the following::
 
-   $ ./dev archlinux pkg-install emacs-nox
-   ...
-   $ ./dev archlinux emacs .
+    $ ./dev archlinux pkg-install emacs-nox
+    ...
+    $ ./dev archlinux emacs .
+
+To **run a command** in bash from root -- with ``./utils/lib.sh`` *sourced* --
+use suite's subcommand ``cmd``.  By example you can use it in your scripts
+running on the HOST system::
+
+    $ ./dev archlinux cmd global_IPs
+    eth0|10.174.184.189
+    eth0|fd42:573b:e0b3:e97e:216:3eff:fe17:b48b
+    ...
+    $ echo "Hello, container's IP is: $(./dev archlinux cmd primary_ip)"
+    ...
+    Hello, container's IP is: 10.174.184.189
 
 
 .. _predefined suites:

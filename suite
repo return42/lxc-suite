@@ -19,6 +19,7 @@ usage::
   $_cmd $_suite_name <image-name> create
   $_cmd $_suite_name <image-name> drop
   $_cmd $_suite_name <image-name> [command ..]
+  $_cmd $_suite_name <image-name> cmd [command ..]
   $_cmd $_suite_name <image-name> pkg-install [pkg-name ..]
   $_cmd $_suite_name <image-name> root
 
@@ -27,7 +28,11 @@ create:
 drop:
   delete container <image-name> of <suite-name>
 [command ..]:
-  execute [command ..] in container <image-name> from <suite-name>
+  execute [command ..] as user ${SERVICE_USER:-root} in container <image-name>
+  from <suite-name>
+cmd [command ..]:
+  execute [command ..] in a root bash with ``./utils/lib.sh`` *sourced*::
+     $_cmd $_suite_name <image-name> cmd globalIPs
 pkg-install [pkg-name ..]:
   install packages [pkg-name ..] into suite container by <image-name>
 root:
@@ -97,8 +102,17 @@ suite_main() {
             shift
             lxc_exec_cmd "$container" 'source "./utils/lib.sh"; pkg_install' "$@"
             ;;
+        pkg-remove)
+            shift
+            lxc_exec_cmd "$container" 'source "./utils/lib.sh"; pkg_remove' "$@"
+            ;;
+        cmd)
+            shift
+            [[ -z "$*" ]] && die 42 "missing 'command ..'"
+            lxc_exec_cmd "$container" 'source "./utils/lib.sh";' "$@"
+            ;;
         *)
-            [[ -z $image ]] && echo "ERROR: missing argument: <image-name>" >&2 && exit 42
+            [[ -z "$*" ]] && suite_usage; die 42 "missing 'command ..'"
             suite_main_cmd "$image" "$@"
             ;;
     esac

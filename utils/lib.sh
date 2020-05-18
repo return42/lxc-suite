@@ -159,7 +159,7 @@ clean_stdin() {
 }
 
 wait_key(){
-    # usage: waitKEY [<timeout in sec>]
+    # usage: wait_key [<timeout in sec>]
 
     clean_stdin
     local _t=$1
