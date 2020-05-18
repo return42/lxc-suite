@@ -1,12 +1,8 @@
 .. SPDX-License-Identifier: GNU General Public License v3.0 or later
 
-==========
-LXC suites
-==========
-
 ----
 
-**Managing LXC more comfortable in suites**
+**LXC suites** // *Managing LXC more comfortable in suites*
 
 ----
 
@@ -15,6 +11,10 @@ LXC suites
 |License| |Issues|  |PR|  |commits|
 
 ----
+
+==========
+LXC suites
+==========
 
 .. contents:: Contents
    :depth: 2
@@ -102,7 +102,7 @@ To evaluate variables in the container use single quotation marks::
 Predefined suites
 =================
 
-.. _dev-py-req.txt: https://github.com/return42/lxc-suite/blob/master/dev-py-req.txt
+.. _dev-py-req: https://github.com/return42/lxc-suite/blob/master/dev-py-req.txt
 .. _ptpython: https://github.com/prompt-toolkit/ptpython
 
 ``./dev`` : ubu2004, fedora31, archlinux
@@ -110,19 +110,19 @@ Predefined suites
   DevOps prototyping.
 
   Creates system account ``dev-user`` and builds a python virtualenv
-  ``~/dev-user/pyenv`` with requirements installed from dev-py-req.txt_.
+  ``~/dev-user/pyenv`` with requirements dev-py-req_ installed .
 
   - ptpython_
 
 
-.. _dev-py-req.txt: https://github.com/return42/lxc-suite/blob/master/synapse-py-req.txt
+.. _synapse-py-req: https://github.com/return42/lxc-suite/blob/master/synapse-py-req.txt
 .. _synapse: https://github.com/matrix-org/synapse
 
-``./synapse`` : *WIP**
-  Suite for prototyping with synapse_.
+``./synapse`` : *WIP*
+  Suite for prototyping with a synapse_ *homeserver*.
 
   Creates system account ``synapse`` and builds a python virtualenv
-  ``~/synapse/pyenv`` with requirements installed from dev-py-req.txt_.
+  ``~/synapse/pyenv`` with requirements from synapse-py-req_ installed.
 
 
 .. _create new suites:
