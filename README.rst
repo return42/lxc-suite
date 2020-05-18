@@ -236,7 +236,7 @@ This evaluates to::
 .. |commits| image:: https://img.shields.io/github/commit-activity/y/return42/lxc-suite?color=yellow&label=commits
    :target: https://github.com/return42/lxc-suite/commits/master
 
-.. |lxc-suite logo| figure:: https://raw.githubusercontent.com/return42/lxc-suite/master/utils/lxc_logo.png
+.. |lxc-suite logo| image:: https://raw.githubusercontent.com/return42/lxc-suite/master/utils/lxc_logo.png
    :target: https://github.com/return42/lxc-suite/blob/master/README.rst
    :alt: LXC suites
    :align: right
