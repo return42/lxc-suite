@@ -4,16 +4,15 @@
 LXC suites
 ==========
 
-.. figure:: https://raw.githubusercontent.com/return42/lxc-suite/master/utils/lxc_logo.png
-   :target: https://return42.github.io/lxc-suite/
-   :alt: LXC suites
-   :width: 30%
-   :align: left
+----
 
-|License|
-|Issues|
-|PR|
-|commits|
+**Managing LXC more comfortable in suites**
+
+----
+
+|lxc-suite logo|
+
+|License| |Issues|  |PR|  |commits|
 
 ----
 
@@ -24,11 +23,15 @@ LXC suites
 
 ----
 
-Managing LXC more comfortable in *suites*.  To get in use of *LXC suites*, lxd
-needs to be installed on the HOST system first::
+To get in use of *LXC suites*, lxd needs to be installed on the HOST system
+first::
 
     $ sudo -H snap install lxd
     $ sudo -H lxd init --auto
+
+    $ cd ~/Downloads
+    $ git clone https://github.com/return42/lxc-suite.git
+    $ cd lxc-suite
 
 If you are in a hurry and just want to *play* with LXC suites, install the
 *developer suite* into a archlinux container::
@@ -54,9 +57,9 @@ Or start any other command::
 ``./suite``
 ===========
 
-The ``./lxc`` command implements all the basic LXC commands to work with
-lxc-suites (*lxc-suite's porcelain*).  For the work in context of a *suite*
-there is another bash script named: ``./suite``::
+The lxc_ script wraps all the basic LXC commands to work with lxc-suites
+(*lxc-suite's porcelain* implemented in ``./utils/lxc.sh``).  For the work in
+context of a *suite* there is another bash script named: ``./suite``::
 
     $ ./suite --help
     usage::
@@ -67,9 +70,9 @@ there is another bash script named: ``./suite``::
     LXC suites:
       dev synapse ...
 
-Mostly you will run the *suite* command by using one of the wrapper.  To
-**install** the **dev suite** into a **archlinux** image use the ``./dev``
-wrapper::
+Mostly you will run the *suite* command by using one of the wrapper
+(`predefined suites`_).  To **install** the **dev suite** into
+a **archlinux** image use the ``./dev`` wrapper::
 
     $ ./dev archlinux create
 
@@ -94,10 +97,38 @@ To evaluate variables in the container use single quotation marks::
   dev-archlinux
 
 
-.. create suite:
+.. _predefined suites:
 
-creating a new suite
-====================
+Predefined suites
+=================
+
+.. _dev-py-req.txt: https://github.com/return42/lxc-suite/blob/master/dev-py-req.txt
+.. _ptpython: https://github.com/prompt-toolkit/ptpython
+
+``./dev`` : ubu2004, fedora31, archlinux
+  Suite that assembles a developer environment, useful as template or for
+  DevOps prototyping.
+
+  Creates system account ``dev-user`` and builds a python virtualenv
+  ``~/dev-user/pyenv`` with requirements installed from dev-py-req.txt_.
+
+  - ptpython_
+
+
+.. _dev-py-req.txt: https://github.com/return42/lxc-suite/blob/master/synapse-py-req.txt
+.. _synapse: https://github.com/matrix-org/synapse
+
+``./synapse`` : *WIP**
+  Suite for prototyping with synapse_.
+
+  Creates system account ``synapse`` and builds a python virtualenv
+  ``~/synapse/pyenv`` with requirements installed from dev-py-req.txt_.
+
+
+.. _create new suites:
+
+Create new suites
+=================
 
 To create your own LXC suite, copy the *developer* suite from ``./dev.env`` into
 ``./my-suite.env`` and edit it to your needs.  For convenience create a wrapper
@@ -240,3 +271,7 @@ This evaluates to::
 
 .. |commits| image:: https://img.shields.io/github/commit-activity/y/return42/lxc-suite?color=yellow&label=commits
    :target: https://github.com/return42/lxc-suite/commits/master
+
+.. |lxc-suite logo| image:: https://raw.githubusercontent.com/return42/lxc-suite/master/utils/lxc_logo.png
+   :target: https://github.com/return42/lxc-suite/blob/master/README.rst
+   :alt: LXC suites
