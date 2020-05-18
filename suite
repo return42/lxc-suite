@@ -10,37 +10,41 @@ for file in "${REPO_ROOT}"/*.env; do
     LXC_SUITES+=("${file%.*}")
 done
 
-_suite_name="<suite_name>"
+_suite_name="<suite-name>"
+_image_name="<image-name>"
 
 suite_usage() {
-    _cmd="$(basename "$0")"
+    _cmd="$(basename "$0") $_suite_name $_image_name"
+    if [[ -n $LXC_SUITE_NAME ]];then
+        _cmd="./${LXC_SUITE_NAME} $_image_name"
+    fi
     cat <<EOF
 usage::
-  $_cmd $_suite_name <image-name> create
-  $_cmd $_suite_name <image-name> drop
-  $_cmd $_suite_name <image-name> [command ..]
-  $_cmd $_suite_name <image-name> cmd [command ..]
-  $_cmd $_suite_name <image-name> pkg-install [pkg-name ..]
-  $_cmd $_suite_name <image-name> root
+  $_cmd create
+  $_cmd drop
+  $_cmd { command .. }
+  $_cmd cmd { command .. }
+  $_cmd [pkg-[install|remove] { pkg-name .. }
+  $_cmd root
 
 create:
-  build container from <image-name> and install <suite-name>
+  Build container from $_image_name and install <suite-name>.
 drop:
-  delete container <image-name> of <suite-name>
-[command ..]:
-  execute [command ..] as user ${SERVICE_USER:-root} in container <image-name>
-  from <suite-name>
-cmd [command ..]:
-  execute [command ..] in a root bash with ``./utils/lib.sh`` *sourced*::
-     $_cmd $_suite_name <image-name> cmd globalIPs
-pkg-install [pkg-name ..]:
-  install packages [pkg-name ..] into suite container by <image-name>
+  Delete container $_image_name of <suite-name>.
+{ command .. }:
+  Execute { command .. } as user '${SERVICE_USER:-root}' in container
+  $_image_name from suite <$_suite_name>.
+cmd { command .. }:
+  Execute { command .. } in a 'root' bash with './utils/lib.sh' *sourced*.
+pkg-install / pkg-remove { pkg-name .. }:
+  Install / remove packages { pkg-name .. } in container $_image_name
+  from suite <$_suite_name>.
 root:
   start a bash for user root in the container
 EOF
     echo "LXC suites:"
     echo "  ${LXC_SUITES[*]}" | $FMT
-    if [[ "${LXC_SUITES[*]}" == "" ]]; then
+    if [[ -n ${LOCAL_IMAGES[*]} ]]; then
         echo "suite images:"
         echo "  ${LOCAL_IMAGES[*]}" | $FMT
     fi
@@ -78,21 +82,23 @@ suite_main() {
         ;;
     esac
 
-    image="$1"; shift
-    [[ -z $image ]] && echo "ERROR: missing argument: <image-name>" >&2 && exit 42
-    container="$LXC_HOST_PREFIX-$image"
+    _image_name="$1"; shift
+    [[ -z $_image_name ]] && echo "ERROR: missing argument: <image-name>" >&2 && exit 42
+
+    sudo_or_exit
+
+    container="$LXC_HOST_PREFIX-$_image_name"
     if ! lxc_exists "$container";then
         err_msg "container ** $container ** does not yet exists"
         exit 42
     fi
-    sudo_or_exit
 
     case $1 in
         create)
-            suite_main_create "$image"
+            suite_main_create "$_image_name"
             ;;
         drop)
-            suite_main_drop "$image"
+            suite_main_drop "$_image_name"
             ;;
         root)
             shift
@@ -108,12 +114,18 @@ suite_main() {
             ;;
         cmd)
             shift
-            [[ -z "$*" ]] && die 42 "missing 'command ..'"
+            if [[ -z "$*" ]]; then
+                suite_usage
+                die 42 "missing '{ command .. }'"
+            fi
             lxc_exec_cmd "$container" 'source "./utils/lib.sh";' "$@"
             ;;
         *)
-            [[ -z "$*" ]] && suite_usage; die 42 "missing 'command ..'"
-            suite_main_cmd "$image" "$@"
+            if [[ -z "$*" ]]; then
+                suite_usage
+                die 42 "missing '{ command .. }'"
+            fi
+            suite_main_cmd "$_image_name" "$@"
             ;;
     esac
 }
