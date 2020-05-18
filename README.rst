@@ -57,9 +57,9 @@ Or start any other command::
 ``./suite``
 ===========
 
-The ``./lxc`` command implements all the basic LXC commands to work with
-lxc-suites (*lxc-suite's porcelain*).  For the work in context of a *suite*
-there is another bash script named: ``./suite``::
+The lxc_ script wraps all the basic LXC commands to work with lxc-suites
+(*lxc-suite's porcelain* implemented in ``./utils/lxc.sh``).  For the work in
+context of a *suite* there is another bash script named: ``./suite``::
 
     $ ./suite --help
     usage::
