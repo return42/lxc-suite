@@ -9,14 +9,13 @@ for file in "${REPO_ROOT}"/*.env; do
     file="$(basename "$file")"
     LXC_SUITES+=("${file%.*}")
 done
-
-_suite_name="<suite-name>"
-_image_name="<image-name>"
+LXC_SUITE_NAME="<suite-name>"
+LXC_SUITE_IMAGE="<image-name>"
 
 suite_usage() {
-    _cmd="$(basename "$0") $_suite_name $_image_name"
+    _cmd="$(basename "$0") $LXC_SUITE_NAME $LXC_SUITE_IMAGE"
     if [[ -n $LXC_SUITE_NAME ]];then
-        _cmd="./${LXC_SUITE_NAME} $_image_name"
+        _cmd="./${LXC_SUITE_NAME} $LXC_SUITE_IMAGE"
     fi
     cat <<EOF
 usage::
@@ -28,17 +27,17 @@ usage::
   $_cmd root
 
 create:
-  Build container from $_image_name and install <suite-name>.
+  Build container from $LXC_SUITE_IMAGE and install <suite-name>.
 drop:
-  Delete container $_image_name of <suite-name>.
+  Delete container $LXC_SUITE_IMAGE of <suite-name>.
 { command .. }:
   Execute { command .. } as user '${SERVICE_USER:-root}' in container
-  $_image_name from suite <$_suite_name>.
+  $LXC_SUITE_IMAGE from suite $LXC_SUITE_NAME.
 cmd { command .. }:
   Execute { command .. } in a 'root' bash with './utils/lib.sh' *sourced*.
 pkg-install / pkg-remove { pkg-name .. }:
-  Install / remove packages { pkg-name .. } in container $_image_name
-  from suite <$_suite_name>.
+  Install / remove packages { pkg-name .. } in container $LXC_SUITE_IMAGE
+  from suite <$LXC_SUITE_NAME>.
 root:
   start a bash for user root in the container
 EOF
@@ -75,19 +74,19 @@ suite_main() {
         ''|-h|--help) _load_lib; suite_usage;  exit
         ;;
     esac
-    _suite_name="$1"; shift
-    _init_suite "$_suite_name"
+    LXC_SUITE_NAME="$1"; shift
+    _init_suite "$LXC_SUITE_NAME"
     case $1 in
         ''|-h|--help) _load_lib; suite_usage;  exit
         ;;
     esac
 
-    _image_name="$1"; shift
-    [[ -z $_image_name ]] && echo "ERROR: missing argument: <image-name>" >&2 && exit 42
+    LXC_SUITE_IMAGE="$1"; shift
+    [[ -z $LXC_SUITE_IMAGE ]] && echo "ERROR: missing argument: <image-name>" >&2 && exit 42
 
     sudo_or_exit
 
-    container="$LXC_HOST_PREFIX-$_image_name"
+    container="$LXC_HOST_PREFIX-$LXC_SUITE_IMAGE"
     case $1 in
         drop|root|pkg-*)
             if ! lxc_exists "$container";then
@@ -97,10 +96,10 @@ suite_main() {
     esac
     case $1 in
         create)
-            suite_main_create "$_image_name"
+            suite_main_create "$LXC_SUITE_IMAGE"
             ;;
         drop)
-            suite_main_drop "$_image_name"
+            suite_main_drop "$LXC_SUITE_IMAGE"
             ;;
         root)
             shift
@@ -127,7 +126,7 @@ suite_main() {
                 suite_usage
                 die 42 "missing '{ command .. }'"
             fi
-            suite_main_cmd "$_image_name" "$@"
+            suite_main_cmd "$LXC_SUITE_IMAGE" "$@"
             ;;
     esac
 }
