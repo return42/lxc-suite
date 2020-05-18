@@ -1,20 +1,21 @@
 .. SPDX-License-Identifier: GNU General Public License v3.0 or later
 
 ==========
-
+LXC suites
 ==========
 
-+-----------------+----------------------+
-|                 |                      |
-| |License|       | |lxc-suite logo|     |
-|                 |                      |
-| |Issues|        | LXC suites           |
-|                 |                      |
-| |PR|            | Managing LXC more    |
-|                 | comfortable in       |
-| |commits|       |  *suites*.           |
-|                 |                      |
-+-----------------+----------------------+
++-------------------+----------------------+
+|                   |                      |
+| Managing LXC more | |lxc-suite logo|     |
+| comfortable in    |                      |
+| *suites*.         |                      |
+|                   |                      |
+| - |License|       |                      |
+| - |Issues|        |                      |
+| - |PR|            |                      |
+| - |commits|       |                      |
+|                   |                      |
++-------------------+----------------------+
 
 .. contents:: Contents
    :depth: 2
