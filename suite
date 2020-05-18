@@ -34,8 +34,8 @@ EOF
 
 _init_suite(){
     [[ -z $1 ]] && echo "ERROR: missing argument: <suite-name>" >&2 && exit 42
-    LXC_ENV="${REPO_ROOT}/$1.env"
-    [[ ! -e $LXC_ENV ]] && echo "ERROR: lxc suite does not exists: ${LXC_ENV}" >&2 && exit 42
+    LXC_ENV="./$1.env"
+    [[ ! -e ${REPO_ROOT}/$1.env ]] && echo "ERROR: lxc suite does not exists: ${LXC_ENV}" >&2 && exit 42
     export LXC_ENV
     if [[ $LXC_ENV != $("${REPO_ROOT}/utils/lxc.sh" --getenv LXC_ENV) ]];then
         _load_lib

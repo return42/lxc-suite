@@ -7,7 +7,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 source_dot_config || die 42 "error while reading ${DOT_CONFIG}"
 
 # load environment of the LXC suite
-LXC_ENV="${LXC_ENV:-${REPO_ROOT}/dev.env}"
+LXC_ENV="${LXC_ENV:-./dev.env}"
 [[ ! -f ${LXC_ENV} ]] && die 42 "can't read lxc suite from: ${LXC_ENV}"
 source "$LXC_ENV"
 lxc_set_suite_env
