@@ -29,6 +29,10 @@ first::
     $ sudo -H snap install lxd
     $ sudo -H lxd init --auto
 
+    $ cd ~/Downloads
+    $ git clone https://github.com/return42/lxc-suite.git
+    $ cd lxc-suite
+
 If you are in a hurry and just want to *play* with LXC suites, install the
 *developer suite* into a archlinux container::
 
