@@ -21,15 +21,19 @@ suite_usage() {
 usage::
   $_cmd create
   $_cmd drop
+  $_cmd [start|stop]
   $_cmd { command .. }
   $_cmd cmd { command .. }
   $_cmd [pkg-[install|remove] { pkg-name .. }
+  $_cmd install [suite|base]
   $_cmd root
 
 create:
   Build container from image $LXC_SUITE_IMAGE and install suite $LXC_SUITE_NAME.
 drop:
   Delete container from image $LXC_SUITE_IMAGE (suite $LXC_SUITE_NAME).
+[start|stop]:
+  start/stop container
 { command .. }:
   Execute { command .. } as user '${SERVICE_USER:-root}' in container $LXC_SUITE_IMAGE
   from suite $LXC_SUITE_NAME.
@@ -38,6 +42,14 @@ cmd { command .. }:
 pkg-install / pkg-remove { pkg-name .. }:
   Install / remove packages { pkg-name .. } in container from image
   $LXC_SUITE_IMAGE (suite $LXC_SUITE_NAME)
+show:
+  :info:         show container info
+  :config:       show container config
+  :suite:        show services of the container
+  :images:       show information of the image
+install:
+  :base:         prepare LXC; install basic packages
+  :suite:        install LXC ${LXC_SUITE_NAME} suite into container
 root:
   start a bash for user root in the container
 EOF
@@ -109,6 +121,44 @@ suite_main() {
             ;;
         drop)
             suite_main_drop "$LXC_SUITE_IMAGE"
+            ;;
+        start|stop)
+            lxc "$1" "$container"
+            ;;
+        show)
+            case $2 in
+                suite)
+                    lxc_exec_cmd "$container" "${LXC_REPO_ROOT}/utils/lxc.sh" __show suite
+                    ;;
+                config)
+                    lxc config show "$container"
+                    ;;
+                info)
+                    lxc info "$container"
+                    ;;
+                image)
+                    lxc image info $LXC_SUITE_IMAGE
+                    ;;
+                '')
+                    die 42 "missing 'show' option"
+                    ;;
+                *)
+                    die 42 "unknow 'show' option: $2"
+                    ;;
+            esac
+            ;;
+        install)
+            case $2 in
+                suite|base)
+                    lxc_exec_cmd "$container" "${LXC_REPO_ROOT}/utils/lxc.sh" __install "$2"
+                    ;;
+                '')
+                    die 42 "missing 'install' option"
+                    ;;
+                *)
+                    die 42 "unknow 'show' option: $2"
+                    ;;
+            esac
             ;;
         root)
             shift
