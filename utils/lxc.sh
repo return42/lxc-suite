@@ -7,7 +7,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 source_dot_config || die 42 "error while reading ${DOT_CONFIG}"
 
 # load environment of the LXC suite
-LXC_ENV="${LXC_ENV:-./dev.env}"
+LXC_ENV="${LXC_ENV:-dev-env/suite.sh}"
 [[ ! -f ${LXC_ENV} ]] && die 42 "can't read lxc suite from: ${LXC_ENV}"
 source "$LXC_ENV"
 lxc_set_suite_env
@@ -441,9 +441,9 @@ lxc_exec_cmd() {
     local name="$1"
     shift
     exit_val=
-    info_msg "[${_BBlue}${name}${_creset}] ${_BGreen}export LXC_ENV=$LXC_ENV${_creset}"
+    info_msg "[${_BBlue}${name}${_creset}] ${_BGreen}export LXC_ENV=$LXC_ENV LXC_SUITE_IMAGE=$LXC_SUITE_IMAGE${_creset}"
     info_msg "[${_BBlue}${name}${_creset}] ${_BGreen}${*}${_creset}"
-    lxc exec -t --env "LXC_ENV=$LXC_ENV" --cwd "${LXC_REPO_ROOT}" "${name}" -- bash -c "$*"
+    lxc exec -t --env "LXC_ENV=$LXC_ENV" --env "LXC_SUITE_IMAGE=$LXC_SUITE_IMAGE" --cwd "${LXC_REPO_ROOT}" "${name}" -- bash -c "$*"
     exit_val=$?
     if [[ $exit_val -ne 0 ]]; then
         warn_msg "[${_BBlue}${name}${_creset}] exit code (${_BRed}${exit_val}${_creset}) from ${_BGreen}${*}${_creset}"

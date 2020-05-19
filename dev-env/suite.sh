@@ -52,17 +52,10 @@ suite_install(){
     wait_key
     info_msg "install developer tools .."
     tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
-pip install -U -r ${REPO_ROOT}/dev-py-req.txt
+pip install -U -r ${REPO_ROOT}/${LXC_SUITE_NAME}/py-req.txt
 EOF
     info_msg "to start ptpython for this user use::"
     info_msg "    sudo -H ./utils/lxc.sh cmd $(hostname) sudo -u $SERVICE_USER -i ptpython"
 
     wait_key
-}
-
-lxc_suite_info() {
-    (
-        lxc_set_suite_env
-        info_msg "to start python console use:: ./$LXC_SUITE_NAME ${LXC_SUITE_IMAGE:-<image-name>} bash"
-    )
 }

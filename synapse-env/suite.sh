@@ -2,10 +2,6 @@
 # SPDX-License-Identifier: GNU General Public License v3.0 or later
 # shellcheck shell=bash
 
-# This file is a setup of a LXC suite.  It is sourced from different context, do
-# not manipulate the environment directly, implement functions and manipulate
-# environment only is subshells!
-
 # ----------------------------------------------------------------------------
 # config
 # ----------------------------------------------------------------------------
@@ -62,7 +58,7 @@ suite_install(){
     info_msg "install matrix-synapse"
     create_pyenv
     tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
-pip install -U -r ${REPO_ROOT}/synapse-py-req.txt
+pip install -U -r ${REPO_ROOT}/${LXC_SUITE_NAME}-env/py-req.txt
 EOF
     wait_key
 
@@ -76,10 +72,14 @@ python -m synapse.app.homeserver \
 synctl start
 EOF
     wait_key
+}
 
-    rst_title "DevOps, start your engines .." section
 
-    cat <<EOF
+lxc_suite_info() {
+    (
+        lxc_set_suite_env
+        cat <<EOF
+
 Login as system user '$SERVICE_USER' and use::
 
   synctl --help
@@ -104,6 +104,12 @@ folder ${SERVICE_HOME}:
       - names: [client, federation]
         compress: false
 
+To start bash as '$SERVICE_USER'::
+
+  ./${LXC_SUITE_NAME:-./suite <suite-name>} ${LXC_SUITE_IMAGE:-<image-name>} bash
+
+        info_msg "to start python console use:: ./$LXC_SUITE_NAME ${LXC_SUITE_IMAGE:-<image-name>} bash"
+
 To restart homeserver use::
 
   ./${LXC_SUITE_NAME:-./suite <suite-name>} ${LXC_SUITE_IMAGE:-<image-name>} synctl restart
@@ -113,4 +119,6 @@ Homeserver is listening on::
   http://$(primary_ip):8008
 
 EOF
+
+    )
 }

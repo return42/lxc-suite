@@ -41,8 +41,7 @@ To start a bash in the container which we have just created use::
 Or start any other command::
 
     $ ./dev archlinux pwd
-
-    INFO:  [dev-archlinux] export LXC_ENV=./dev.env
+    INFO:  [dev-archlinux] export LXC_ENV=dev-env/suite.sh
     INFO:  [dev-archlinux] sudo -u dev-user -i bash -c "pwd"
     /usr/local/dev-user
     INFO:  [dev-archlinux] exit code (0) from sudo -u dev-user -i bash -c "pwd"
@@ -61,7 +60,7 @@ context of a *suite* there is another bash script named: ``./suite``::
     usage::
       suite <suite-name> <image-name> create
       suite <suite-name> <image-name> drop
-      suite <suite-name> <image-name> [command ...]
+      suite <suite-name> <image-name> { command .. }
     ...
     LXC suites:
       dev synapse ...
@@ -78,7 +77,7 @@ system account (``dev-user``).  To get an interactive bash for this account in
 the ``dev-archlinux`` container use::
 
     $ ./dev archlinux bash
-    INFO:  [dev-archlinux] export LXC_ENV=/share/lxc-suite/dev.env
+    INFO:  [dev-archlinux] export LXC_ENV=dev-env/suite.sh
     INFO:  [dev-archlinux] sudo -u dev-user -i bash -c "bash"
     [dev-user@dev-archlinux ~]$ pwd
     /usr/local/dev-user
@@ -95,7 +94,7 @@ To evaluate variables in the container **use single quotation marks**::
 To get a bash for container's **root login** use::
 
     $ ./dev archlinux root
-    INFO:  [dev-archlinux] export LXC_ENV=./dev.env
+    INFO:  [dev-archlinux] export LXC_ENV=dev-env/suite.sh
     INFO:  [dev-archlinux] bash
     [root@dev-archlinux lxc-suite]# pwd
     /share/lxc-suite
@@ -155,18 +154,22 @@ Predefined suites
 
   - bash (``synapse``) -- usage: ``./dev archlinux bash``
 
+
 .. _create new suites:
 
 Create new suites
 =================
 
-To create your own LXC suite, copy the *developer* suite from ``./dev.env`` into
-``./my-suite.env`` and edit it to your needs.  For convenience create a wrapper
-``/my-suite``.::
+To create your own LXC suite, copy the *developer* suite from ``./dev-env`` into
+``./my-env`` and edit the ``suite.sh`` file to your needs.  For convenience
+create a wrapper ``/my-suite``.::
 
-    $ cp ./dev.env ./my-suite.env
-    $ cp ./dev ./my-suite
-    $ $EDITOR ./my-suite.env
+    $ cp -r ./dev.env ./my-env
+    $ cp ./dev ./my
+    $ $EDITOR ./my-env/suite.sh
+
+Don't forget to drop the files you do not need, e.g. delete the ``py-req.txt``
+if your suite does not need such a requirements file.
 
 
 .. _lxc:
@@ -181,11 +184,11 @@ For usage run::
 To make use of the containers from the *suite*, you have to build the containers
 initial.  But be warned, **this might take some time**::
 
-    # build default dev.env suite
+    # build default 'dev' suite (./dev-env/suite.sh)
     $ ./lxc build
 
-    # build my-suite.env
-    $ LXC_ENV=./my-suite.env ./lxc build
+    # build 'my' suite (./my-env/suite.sh)
+    $ LXC_ENV=./my-env/suite.sh ./lxc build
 
 Alternatively you can run the more convenient command: suite_.  To run a command
 in all containers of the suite use ``cmd``::

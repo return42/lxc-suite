@@ -5,17 +5,17 @@
 [[ -z "${REPO_ROOT}" ]] &&  REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 
 LXC_SUITES=()
-for file in "${REPO_ROOT}"/*.env; do
-    file="$(basename "$file")"
-    LXC_SUITES+=("${file%.*}")
+for file in "${REPO_ROOT}"/*-env/suite.sh; do
+    file="$(basename $(dirname "$file"))"
+    LXC_SUITES+=("${file%-env}")
 done
 LXC_SUITE_NAME="<suite-name>"
 LXC_SUITE_IMAGE="<image-name>"
 
 suite_usage() {
     _cmd="$(basename "$0") $LXC_SUITE_NAME $LXC_SUITE_IMAGE"
-    if [[ -n $LXC_SUITE_NAME ]]; then
-        _cmd="./${LXC_SUITE_NAME} $LXC_SUITE_IMAGE"
+    if [[ $LXC_SUITE_NAME != "<suite-name>" ]]; then
+        _cmd="./${LXC_SUITE_NAME} ${LXC_SUITE_IMAGE}"
     fi
     cat <<EOF
 usage::
@@ -52,10 +52,14 @@ EOF
     fi
 }
 
-_init_suite(){
-    [[ -z $1 ]] && echo "ERROR: missing argument: <suite-name>" >&2 && exit 42
-    LXC_ENV="./$1.env"
-    [[ ! -e ${REPO_ROOT}/$1.env ]] && echo "ERROR: lxc suite does not exists: ${LXC_ENV}" >&2 && exit 42
+init_suite(){
+    [[ -z $1 ]] \
+        && echo "ERROR: missing argument: <suite-name>" >&2 && exit 42
+
+    LXC_ENV="$1-env/suite.sh"
+    [[ ! -e ${REPO_ROOT}/${LXC_ENV} ]] \
+        && echo "ERROR: lxc suite does not exists: ${REPO_ROOT}/${LXC_ENV}.env " >&2 && exit 42
+
     export LXC_ENV
     if [[ $LXC_ENV != $("${REPO_ROOT}/utils/lxc.sh" --getenv LXC_ENV) ]];then
         _load_lib
@@ -71,20 +75,22 @@ _load_lib(){
     source "${REPO_ROOT}/utils/lib.sh"
 }
 
+check_help_option() {
+    case $1 in
+        ''|-h|--help) _load_lib; suite_usage;  exit
+        ;;
+    esac
+}
+
 suite_main() {
 
-    case $1 in
-        ''|-h|--help) _load_lib; suite_usage;  exit
-        ;;
-    esac
+    check_help_option "$1"
     LXC_SUITE_NAME="$1"; shift
-    _init_suite "$LXC_SUITE_NAME"
-    case $1 in
-        ''|-h|--help) _load_lib; suite_usage;  exit
-        ;;
-    esac
+    check_help_option "$1"
+    init_suite "$LXC_SUITE_NAME"
 
     LXC_SUITE_IMAGE="$1"; shift
+    check_help_option "$1"
     [[ -z $LXC_SUITE_IMAGE ]] && echo "ERROR: missing argument: <image-name>" >&2 && exit 42
 
     sudo_or_exit
