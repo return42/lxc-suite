@@ -6,7 +6,7 @@
 
 LXC_SUITES=()
 for file in "${REPO_ROOT}"/*-env/suite.sh; do
-    file="$(basename $(dirname "$file"))"
+    file="$(basename "$(dirname "$file")")"
     LXC_SUITES+=("${file%-env}")
 done
 LXC_SUITE_NAME="<suite-name>"

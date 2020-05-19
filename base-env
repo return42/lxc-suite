@@ -66,9 +66,10 @@ lxc_suite_info() {
 }
 
 assert_user() {
-    rst_title "user $SERVICE_USER" section
-    echo
-    tee_stderr 1 <<EOF | bash | prefix_stdout
+    (
+        rst_title "user $SERVICE_USER" section
+        echo
+        tee_stderr 1 <<EOF | bash | prefix_stdout
 useradd --shell /bin/bash --system \
  --home-dir "$SERVICE_HOME" \
  --comment 'Privacy-respecting metasearch engine' $SERVICE_USER
@@ -76,33 +77,33 @@ mkdir "$SERVICE_HOME"
 chown -R "$SERVICE_GROUP:$SERVICE_GROUP" "$SERVICE_HOME"
 groups $SERVICE_USER
 EOF
-    info_msg "to start bash for this user use (e.g. archlinux)::"
-    info_msg "    sudo -H ./utils/lxc.sh cmd $(hostname) sudo -u $SERVICE_USER -i bash"
-    #SERVICE_HOME="$(sudo -i -u "$SERVICE_USER" echo \$HOME)"
-    #export SERVICE_HOME
-    #echo "export SERVICE_HOME=$SERVICE_HOME"
+        info_msg "to start bash for this user use (e.g. archlinux)::"
+        info_msg "    sudo -H ./utils/lxc.sh cmd $(hostname) sudo -u $SERVICE_USER -i bash"
+    )
 }
 
 create_pyenv() {
-    rst_title "Create virtualenv (python)" section
-    echo
-    info_msg "create pyenv in ${SERVICE_PYENV}"
-    tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
+    (
+        rst_title "Create virtualenv (python)" section
+        echo
+        info_msg "create pyenv in ${SERVICE_PYENV}"
+        tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
 rm -rf "${SERVICE_PYENV}"
 python3 -m venv "${SERVICE_PYENV}"
 grep -qFs -- 'source ${SERVICE_PYENV}/bin/activate' ~/.profile \
   || echo 'source ${SERVICE_PYENV}/bin/activate' >> ~/.profile
 EOF
-    info_msg "inspect python's virtual environment"
-    tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
+        info_msg "inspect python's virtual environment"
+        tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
 command -v python && python --version
 EOF
-    wait_key
-    info_msg "install needed python packages"
-    tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
+        wait_key
+        info_msg "install needed python packages"
+        tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
 pip install --upgrade pip
 pip install wheel
 EOF
+    )
 }
 
 suite_main_create(){
