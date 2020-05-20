@@ -16,6 +16,8 @@ SERVICE_PYENV="${SERVICE_HOME}/pyenv"
 LXC_SUITE_NAME="synapse"
 PUBLIC_URL="${PUBLIC_URL:-http://$(primary_ip):8008}"
 
+SUITE_FOLDER=$(dirname "${BASH_SOURCE[0]}")
+
 # ----------------------------------------------------------------------------
 # This file is a LXC suite.  It is sourced from different context, do not
 # manipulate the environment directly, implement functions and manipulate
@@ -28,9 +30,30 @@ source "${REPO_ROOT}/base-env"
 suite_install(){
     (
         FORCE_TIMEOUT=
-        # shellcheck source=dev-env/install_python_dev_suite.sh
-        source "${REPO_ROOT}/synapse-env/install_synapse_homeserver.sh"
+
+        # shellcheck source=dev-env/synapse_homeserver.sh
+        source "${REPO_ROOT}/synapse-env/synapse_homeserver.sh"
+
+        remove_synapse_homeserver
         install_synapse_homeserver
+
+        rst_title "configure synapse homeserver.yaml" section
+
+        tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
+python -m synapse.app.homeserver \
+  --server-name $(hostname) \
+  --config-path homeserver.yaml \
+  --generate-config \
+  --report-stats=yes
+EOF
+        install_template_src \
+            --no-eval \
+            "${SUITE_FOLDER}/homeserver.yaml" \
+            "${SERVICE_HOME}/homeserver.yaml" root root 644
+
+        tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
+        synctl start
+EOF
     )
 }
 

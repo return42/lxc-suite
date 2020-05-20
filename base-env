@@ -84,7 +84,7 @@ mkdir "$SERVICE_HOME"
 chown -R "$SERVICE_GROUP:$SERVICE_GROUP" "$SERVICE_HOME"
 groups $SERVICE_USER
 EOF
-        info_msg "to start bash for this user use (e.g. archlinux)::"
+        info_msg "to start bash for this user use::"
         info_msg "    sudo -H ./utils/lxc.sh cmd $(hostname) sudo -u $SERVICE_USER -i bash"
     )
 }

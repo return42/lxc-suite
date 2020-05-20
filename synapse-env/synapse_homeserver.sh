@@ -28,10 +28,7 @@ install_synapse_homeserver(){
             ;;
     esac
 
-    # make re-install and remove any previous installation
-
-    info_msg "recreate system user (${SERVICE_USER})"
-    userdel -r -f "${SERVICE_USER}" 2>&1 | prefix_stdout
+    info_msg "create system user (${SERVICE_USER})"
     assert_user
     wait_key
 
@@ -44,14 +41,15 @@ pip install -U -r ${REPO_ROOT}/${LXC_SUITE_NAME}-env/py-req.txt
 EOF
     wait_key
 
-    rst_title "configure synapse homeserver.yaml" section
+}
+
+
+remove_synapse_homeserver(){
+
+    rst_title "Remove suite: ${LXC_SUITE_NAME}"
+
     tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
-python -m synapse.app.homeserver \
-  --server-name $(hostname) \
-  --config-path homeserver.yaml \
-  --generate-config \
-  --report-stats=yes
-synctl start
+synctl stop
 EOF
-    wait_key
+    userdel -r -f "${SERVICE_USER}" 2>&1 | prefix_stdout
 }
