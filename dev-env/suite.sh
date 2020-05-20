@@ -27,6 +27,7 @@ source "${REPO_ROOT}/base-env"
 
 suite_install(){
     (
+        FORCE_TIMEOUT=
         # shellcheck source=dev-env/install_python_dev_suite.sh
         source "${REPO_ROOT}/dev-env/install_python_dev_suite.sh"
         install_python_dev_suite

@@ -22,6 +22,13 @@ lxc_set_suite_env() {
     )
 }
 
+# ----------------------------------------------------------------------------
+# This file is a part of all LXC suites.  It is sourced from different context,
+# do not manipulate the environment directly, implement functions and manipulate
+# environment only is subshells!
+# ----------------------------------------------------------------------------
+
+
 lxc_suite_install_info() {
     (
         lxc_set_suite_env

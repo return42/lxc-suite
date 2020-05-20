@@ -27,6 +27,7 @@ source "${REPO_ROOT}/base-env"
 
 suite_install(){
     (
+        FORCE_TIMEOUT=
         # shellcheck source=dev-env/install_python_dev_suite.sh
         source "${REPO_ROOT}/synapse-env/install_synapse_homeserver.sh"
         install_synapse_homeserver
@@ -35,6 +36,7 @@ suite_install(){
 
 lxc_suite_info() {
     (
+        FORCE_TIMEOUT=
         lxc_set_suite_env
         cat <<EOF
 
@@ -77,6 +79,6 @@ Homeserver is listening on::
   ${PUBLIC_URL}
 
 EOF
-
+        wait_key
     )
 }
