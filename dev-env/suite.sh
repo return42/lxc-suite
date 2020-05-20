@@ -16,6 +16,7 @@ SERVICE_PYENV="${SERVICE_HOME}/pyenv"
 LXC_SUITE_NAME="dev"
 PUBLIC_URL="${PUBLIC_URL:-http://$(primary_ip)/$LXC_SUITE_NAME/}"
 
+# shellcheck disable=SC2034
 SUITE_FOLDER=$(dirname "${BASH_SOURCE[0]}")
 
 # ----------------------------------------------------------------------------
@@ -29,9 +30,24 @@ source "${REPO_ROOT}/base-env"
 
 suite_install(){
     (
+        # make re-install and remove any previous installation
+        suite_uninstall
+
         FORCE_TIMEOUT=
-        # shellcheck source=dev-env/install_python_dev_suite.sh
-        source "${REPO_ROOT}/dev-env/install_python_dev_suite.sh"
+
+        # shellcheck source=dev-env/python_dev_suite.sh
+        source "${REPO_ROOT}/dev-env/python_dev_suite.sh"
         install_python_dev_suite
     )
 }
+
+suite_uninstall(){
+    (
+        FORCE_TIMEOUT=
+
+        # shellcheck source=dev-env/python_dev_suite.sh
+        source "${REPO_ROOT}/dev-env/python_dev_suite.sh"
+        uninstall_python_dev_suite
+    )
+}
+

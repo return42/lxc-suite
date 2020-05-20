@@ -5,8 +5,6 @@
 install_synapse_homeserver(){
     # https://github.com/matrix-org/synapse/blob/master/INSTALL.md#platform-specific-instructions
 
-    rst_title "Install suite: ${LXC_SUITE_NAME}"
-
     case $DIST_ID-$DIST_VERS in
         ubuntu-*|debian-*)
             pkg_install build-essential python3-dev libffi-dev \
@@ -45,8 +43,6 @@ EOF
 
 
 remove_synapse_homeserver(){
-
-    rst_title "Remove suite: ${LXC_SUITE_NAME}"
 
     tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
 synctl stop

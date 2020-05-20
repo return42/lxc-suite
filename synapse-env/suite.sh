@@ -31,10 +31,11 @@ suite_install(){
     (
         FORCE_TIMEOUT=
 
-        # shellcheck source=dev-env/synapse_homeserver.sh
-        source "${REPO_ROOT}/synapse-env/synapse_homeserver.sh"
+        info_msg "make re-install, first remove any previous installation"
+        suite_uninstall
 
-        remove_synapse_homeserver
+        # shellcheck source=synapse-env/synapse_homeserver.sh
+        source "${REPO_ROOT}/synapse-env/synapse_homeserver.sh"
         install_synapse_homeserver
 
         rst_title "configure synapse homeserver.yaml" section
@@ -52,8 +53,18 @@ EOF
             "${SERVICE_HOME}/homeserver.yaml" root root 644
 
         tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
-        synctl start
+        synctl restart
 EOF
+    )
+}
+
+suite_uninstall(){
+    (
+        FORCE_TIMEOUT=
+
+        # shellcheck source=synapse-env/synapse_homeserver.sh
+        source "${REPO_ROOT}/synapse-env/synapse_homeserver.sh"
+        remove_synapse_homeserver
     )
 }
 

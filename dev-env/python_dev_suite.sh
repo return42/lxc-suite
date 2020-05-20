@@ -21,8 +21,6 @@ install_python_dev_suite(){
             ;;
     esac
 
-    # make re-install and remove any previous installation
-    userdel -r -f "${SERVICE_USER}" 2>&1 | prefix_stdout
     assert_user
     wait_key
 
@@ -36,4 +34,9 @@ EOF
     info_msg "    sudo -H ./utils/lxc.sh cmd $(hostname) sudo -u $SERVICE_USER -i ptpython"
 
     wait_key
+}
+
+uninstall_python_dev_suite(){
+
+    userdel -r -f "${SERVICE_USER}" 2>&1 | prefix_stdout
 }

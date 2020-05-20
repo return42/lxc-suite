@@ -42,15 +42,38 @@ EOF
     )
 }
 
+suite_install() {
+    die 42 "[${LXC_SUITE_NAME}] Sorry, suite_install not yet implemented! (can't install)"
+}
+
+suite_uninstall() {
+    die 42 "[${LXC_SUITE_NAME}] Sorry, suite_uninstall not yet implemented! (can't un-install)"
+}
+
 lxc_suite_install() {
     (
         lxc_set_suite_env
         FORCE_TIMEOUT=0
         export FORCE_TIMEOUT
+
+        rst_title "install suite '${LXC_SUITE_NAME}' ($(hostname))" part
+        echo
         suite_install
-        rst_title "suite installation finished ($(hostname))" part
+        rst_title "suite '${LXC_SUITE_NAME}' installation finished ($(hostname))"
         lxc_suite_info
         echo
+    )
+}
+
+lxc_suite_uninstall() {
+    (
+        lxc_set_suite_env
+        FORCE_TIMEOUT=0
+        export FORCE_TIMEOUT
+
+        rst_title "uninstall suite '${LXC_SUITE_NAME}' ($(hostname))" part
+        echo
+        suite_uninstall
     )
 }
 

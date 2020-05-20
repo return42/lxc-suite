@@ -82,6 +82,7 @@ usage::
   $_cmd show         [images|suite|info|config [<name>]]
   $_cmd cmd          [--|<name>] '...'
   $_cmd install      [suite|base [<name>]]
+  $_cmd uninstall    [suite [<name>]]
 
 build
   :containers:   build, launch all containers and 'install base' packages
@@ -106,6 +107,8 @@ cmd
 install
   :base:         prepare LXC; install basic packages
   :suite:        install LXC ${LXC_SUITE_NAME} suite into all (or <name>) containers
+uninstall
+  :suite:        uninstall LXC ${LXC_SUITE_NAME} suite from all (or <name>) containers
 
 EOF
     usage_containers
@@ -139,7 +142,7 @@ main() {
         if ! in_container; then
             ! required_commands lxc && lxd_info && exit 42
         fi
-        [[ -z $LXC_SUITE ]] && err_msg "missing LXC_SUITE" && exit 42 
+        [[ -z $LXC_SUITE ]] && err_msg "missing LXC_SUITE" && exit 42
     fi
 
     case $1 in
@@ -267,12 +270,35 @@ main() {
                 *) usage "$_usage"; exit 42 ;;
             esac
             ;;
+        uninstall)
+            sudo_or_exit
+            case $2 in
+                suite)
+                    case $3 in
+                        ${LXC_HOST_PREFIX}-*)
+                            ! lxc_exists "$3" && usage_containers "unknown container: $3" && exit 42
+                            lxc_exec_cmd "$3" "${LXC_REPO_ROOT}/utils/lxc.sh" __uninstall "$2"
+                            ;;
+                        ''|--) lxc_exec "${LXC_REPO_ROOT}/utils/lxc.sh" __uninstall "$2" ;;
+                        *) usage_containers "unknown container: $3" && exit 42
+                    esac
+                    ;;
+                *) usage "$_usage"; exit 42 ;;
+            esac
+            ;;
         __install)
             # wrapped install commands, called once in each container
             # shellcheck disable=SC2119
             case $2 in
                 suite) lxc_suite_install ;;
                 base) FORCE_TIMEOUT=0 lxc_install_base_packages ;;
+            esac
+            ;;
+        __uninstall)
+            # wrapped install commands, called once in each container
+            # shellcheck disable=SC2119
+            case $2 in
+                suite) lxc_suite_uninstall ;;
             esac
             ;;
         doc)

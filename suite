@@ -27,6 +27,7 @@ usage::
   $_cmd cmd { command .. }
   $_cmd pkg-[install|remove] { pkg-name .. }
   $_cmd install [suite|base]
+  $_cmd uninstall [suite]
   $_cmd show [images|suite|info|config]
   $_cmd root
 
@@ -38,6 +39,8 @@ build:
 install:
   :base:         prepare LXC; install basic packages
   :suite:        install LXC ${LXC_SUITE_NAME} suite into container
+uninstall
+  :suite:        uninstall LXC ${LXC_SUITE_NAME} suite from container
 drop:
   Delete container from image $LXC_SUITE_IMAGE (suite $LXC_SUITE_NAME).
 [start|stop]:
@@ -132,12 +135,17 @@ suite_main() {
                 suite|base)
                     lxc_exec_cmd "$container" "${LXC_REPO_ROOT}/utils/lxc.sh" __install "$2"
                     ;;
-                '')
-                    die 42 "missing 'install' option"
+                '') die 42 "missing 'install' option" ;;
+                *) die 42 "unknow 'show' option: $2" ;;
+            esac
+            ;;
+       uninstall)
+            case $2 in
+                suite)
+                    lxc_exec_cmd "$container" "${LXC_REPO_ROOT}/utils/lxc.sh" __uninstall "$2"
                     ;;
-                *)
-                    die 42 "unknow 'show' option: $2"
-                    ;;
+                '') die 42 "missing 'uninstall' option" ;;
+                *) die 42 "unknow 'show' option: $2" ;;
             esac
             ;;
         drop)
@@ -158,7 +166,7 @@ suite_main() {
                     lxc info "$container"
                     ;;
                 image)
-                    lxc image info $LXC_SUITE_IMAGE
+                    lxc image info "$LXC_SUITE_IMAGE"
                     ;;
                 '')
                     die 42 "missing 'show' option"
