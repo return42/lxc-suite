@@ -476,6 +476,44 @@ install_template() {
     done
 }
 
+install_template_src() {
+
+    # wrapper arround install_template(), usage::
+    #
+    #     install_template_src [--no-eval] [--variant=<name>] \
+    #                          {src-file} {dst-file} [{owner} [{group} [{chmod}]]]
+
+    (
+
+        TEMPLATES="${CACHE}/suite-templates"
+        local template_args=()
+        for i in "$@"; do
+            case $i in
+                -*)
+                    template_args+=("$i")
+                    continue
+                    ;;
+                *)
+                    if [[ ! "$src" ]]; then
+                       src="$i"
+                       continue
+                    fi
+                    if [[ ! "$dst" ]]; then
+                       dst="$i"
+                       template_args+=("$i")
+                       continue
+                    fi
+                    template_args+=("$i")
+                    continue
+                    ;;
+            esac
+        done
+        mkdir -p "$(dirname "${TEMPLATES}${dst}")"
+        cp -f "${src}" "${TEMPLATES}${dst}"
+        install_template "${template_args[@]}"
+        wait_key
+    )
+}
 
 service_is_available() {
 
