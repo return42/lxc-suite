@@ -34,7 +34,7 @@ install_synapse_homeserver(){
 
     info_msg "install matrix-synapse"
     create_pyenv
-    tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
+    suite_service_user_shell <<EOF
 pip install -U -r ${REPO_ROOT}/${LXC_SUITE_NAME}-env/py-req.txt
 EOF
     wait_key
@@ -44,7 +44,7 @@ EOF
 
 remove_synapse_homeserver(){
 
-    tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
+    suite_service_user_shell <<EOF
 synctl stop
 EOF
     userdel -r -f "${SERVICE_USER}" 2>&1 | prefix_stdout

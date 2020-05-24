@@ -27,7 +27,7 @@ install_python_dev_suite(){
     create_pyenv
     wait_key
     info_msg "install developer tools .."
-    tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
+    suite_service_user_shell <<EOF
 pip install -U -r ${REPO_ROOT}/${LXC_SUITE_NAME}/py-req.txt
 EOF
     info_msg "to start ptpython for this user use::"

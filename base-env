@@ -99,7 +99,7 @@ assert_user() {
     (
         rst_title "user $SERVICE_USER" section
         echo
-        tee_stderr 1 <<EOF | bash | prefix_stdout
+        suite_root_shell <<EOF
 useradd --shell /bin/bash --system \
  --home-dir "$SERVICE_HOME" \
  --comment 'Privacy-respecting metasearch engine' $SERVICE_USER
@@ -117,23 +117,36 @@ create_pyenv() {
         rst_title "Create virtualenv (python)" section
         echo
         info_msg "create pyenv in ${SERVICE_PYENV}"
-        tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
+        suite_service_user_shell <<EOF
 rm -rf "${SERVICE_PYENV}"
 python3 -m venv "${SERVICE_PYENV}"
 grep -qFs -- 'source ${SERVICE_PYENV}/bin/activate' ~/.profile \
   || echo 'source ${SERVICE_PYENV}/bin/activate' >> ~/.profile
 EOF
         info_msg "inspect python's virtual environment"
-        tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
+        suite_service_user_shell <<EOF
 command -v python && python --version
 EOF
         wait_key
         info_msg "install needed python packages"
-        tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
+        suite_service_user_shell <<EOF
 pip install --upgrade pip
 pip install wheel
 EOF
     )
+}
+
+suite_service_user_shell(){
+    # shellcheck disable=SC2154
+    tee_stderr 0.1 \
+        | sudo -H -u "${SERVICE_USER}" -i 2>&1 \
+        |  prefix_stdout "${_Yellow}|${SERVICE_USER}|${_creset} "
+}
+
+suite_root_shell(){
+    tee_stderr 0.1 \
+        | bash 2>&1 \
+        | prefix_stdout
 }
 
 suite_main_create(){
