@@ -32,7 +32,7 @@ suite_install(){
         FORCE_TIMEOUT=
 
         # shellcheck source=synapse-env/synapse_homeserver.sh
-        source "${REPO_ROOT}/synapse-env/synapse_homeserver.sh"
+        source "${SUITE_FOLDER}/synapse_homeserver.sh"
 
         install_synapse_homeserver
 
@@ -86,7 +86,7 @@ suite_uninstall() {
         FORCE_TIMEOUT=
 
         # shellcheck source=synapse-env/synapse_homeserver.sh
-        source "${REPO_ROOT}/synapse-env/synapse_homeserver.sh"
+        source "${SUITE_FOLDER}/synapse_homeserver.sh"
         remove_synapse_homeserver
     )
 }
