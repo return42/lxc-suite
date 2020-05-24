@@ -31,16 +31,14 @@ suite_install(){
     (
         FORCE_TIMEOUT=
 
-        info_msg "make re-install, first remove any previous installation"
-        suite_uninstall
-
         # shellcheck source=synapse-env/synapse_homeserver.sh
         source "${REPO_ROOT}/synapse-env/synapse_homeserver.sh"
+
         install_synapse_homeserver
 
         rst_title "configure synapse homeserver.yaml" section
-
-        tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
+        echo
+        suite_service_user_shell <<EOF
 python -m synapse.app.homeserver \
   --server-name $(hostname) \
   --config-path homeserver.yaml \
@@ -55,10 +53,35 @@ EOF
         tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
         synctl restart
 EOF
+
+        homeserver_create_admin_account
     )
 }
 
-suite_uninstall(){
+homeserver_create_admin_account() {
+
+        rst_title "Create first account (admin)"
+        echo
+        while true; do
+            read -r -s -p "Enter password for user 'admin': [admin]" _passwd
+            echo
+            read -r -s -p "validate password: " _passwd2
+            echo
+            if [[ "$_passwd" == "$_passwd2" ]]; then
+                break
+            fi
+        done
+
+        [[ -z $_passwd ]] && _passwd='admin'
+
+        info_msg "register_new_matrix_user -u admin -p xxxx -a -c ~/homeserver.yaml http://localhost:8008"
+        sudo -H -u "${SERVICE_USER}" -i 2>&1 <<EOF | prefix_stdout "|$SERVICE_USER| "
+register_new_matrix_user -u admin -p "${_passwd}" -a -c ~/homeserver.yaml http://localhost:8008
+EOF
+        wait_key
+}
+
+suite_uninstall() {
     (
         FORCE_TIMEOUT=
 
