@@ -55,6 +55,11 @@ EOF
 EOF
 
         homeserver_create_admin_account
+
+        # shellcheck source=synapse-env/self_signed_nginx.sh
+        source "${SUITE_FOLDER}/self_signed_nginx.sh"
+        install_self_signed_nginx
+
     )
 }
 
