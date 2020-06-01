@@ -18,6 +18,7 @@ SERVICE_PYENV="${SERVICE_HOME}/pyenv"
 
 LXC_SUITE_NAME="synapse"
 PUBLIC_URL="${PUBLIC_URL:-https://$(primary_ip)/_matrix/static/}"
+RIOT_PUBLIC_URL="${RIOT_PUBLIC_URL:-https://$(primary_ip)/riot/}"
 
 SUITE_FOLDER=$(dirname "${BASH_SOURCE[0]}")
 
@@ -140,9 +141,8 @@ To restart homeserver use::
 
   ./${LXC_SUITE_NAME:-./suite <suite-name>} ${LXC_SUITE_IMAGE:-<image-name>} synctl restart
 
-Homeserver is listening on::
-
-  ${PUBLIC_URL}
+- homeserver is listening on: ${PUBLIC_URL}
+- Riot WEB client at:         ${RIOT_PUBLIC_URL}
 
 EOF
         wait_key
