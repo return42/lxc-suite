@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: GNU General Public License v3.0 or later
 # shellcheck shell=bash
 
+# https://github.com/matrix-org/synapse
+
 # ----------------------------------------------------------------------------
 # config
 # ----------------------------------------------------------------------------
@@ -14,7 +16,7 @@ SERVICE_GROUP="${SERVICE_USER}"
 SERVICE_PYENV="${SERVICE_HOME}/pyenv"
 
 LXC_SUITE_NAME="synapse"
-PUBLIC_URL="${PUBLIC_URL:-http://$(primary_ip):8008}"
+PUBLIC_URL="${PUBLIC_URL:-http://$(primary_ip)/_matrix/static/}"
 
 SUITE_FOLDER=$(dirname "${BASH_SOURCE[0]}")
 
@@ -31,10 +33,12 @@ suite_install(){
     (
         FORCE_TIMEOUT=
 
+        rst_title "Install synapse homeserver"
+
         # shellcheck source=synapse-env/synapse_homeserver.sh
         source "${SUITE_FOLDER}/synapse_homeserver.sh"
-
         install_synapse_homeserver
+        wait_key
 
         rst_title "configure synapse homeserver.yaml" section
         echo
@@ -51,40 +55,28 @@ EOF
             "${SERVICE_HOME}/homeserver.yaml" root root 644
 
         tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
-        synctl restart
+synctl stop
+synctl start
 EOF
+        wait_key
 
-        homeserver_create_admin_account
-
+        rst_title "Install HTTPS (self-signed)"
         # shellcheck source=synapse-env/self_signed_nginx.sh
         source "${SUITE_FOLDER}/self_signed_nginx.sh"
         install_self_signed_nginx
+        wait_key
 
+        rst_title "Install matrix reverse proxy"
+        homeserver_install_reverse_proxy
+        wait_key
+
+        rst_title "Create first account (admin)" section
+        echo
+        homeserver_create_admin_account
+        wait_key
     )
 }
 
-homeserver_create_admin_account() {
-
-        rst_title "Create first account (admin)"
-        echo
-        while true; do
-            read -r -s -p "Enter password for user 'admin': [admin]" _passwd
-            echo
-            read -r -s -p "validate password: " _passwd2
-            echo
-            if [[ "$_passwd" == "$_passwd2" ]]; then
-                break
-            fi
-        done
-
-        [[ -z $_passwd ]] && _passwd='admin'
-
-        info_msg "register_new_matrix_user -u admin -p xxxx -a -c ~/homeserver.yaml http://localhost:8008"
-        sudo -H -u "${SERVICE_USER}" -i 2>&1 <<EOF | prefix_stdout "|$SERVICE_USER| "
-register_new_matrix_user -u admin -p "${_passwd}" -a -c ~/homeserver.yaml http://localhost:8008
-EOF
-        wait_key
-}
 
 suite_uninstall() {
     (
@@ -92,7 +84,14 @@ suite_uninstall() {
 
         # shellcheck source=synapse-env/synapse_homeserver.sh
         source "${SUITE_FOLDER}/synapse_homeserver.sh"
+        nginx_remove_app matrix.conf
         remove_synapse_homeserver
+
+        # shellcheck source=synapse-env/riot-web.sh
+        source "${SUITE_FOLDER}/riot-web.sh"
+        nginx_remove_app riot-web.conf
+        remove_riot_web
+
     )
 }
 
@@ -120,7 +119,7 @@ folder ${SERVICE_HOME}:
         tls: false
         type: http
         x_forwarded: true
-        bind_addresses: ['::', '0.0.0.0']
+        bind_addresses: ['127.0.0.1']
     ...
     resources:
       - names: [client, federation]
