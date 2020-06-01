@@ -17,7 +17,7 @@ SERVICE_GROUP="${SERVICE_USER}"
 SERVICE_PYENV="${SERVICE_HOME}/pyenv"
 
 LXC_SUITE_NAME="synapse"
-PUBLIC_URL="${PUBLIC_URL:-http://$(primary_ip)/_matrix/static/}"
+PUBLIC_URL="${PUBLIC_URL:-https://$(primary_ip)/_matrix/static/}"
 
 SUITE_FOLDER=$(dirname "${BASH_SOURCE[0]}")
 

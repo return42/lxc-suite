@@ -8,8 +8,17 @@ install_self_signed_nginx() {
         info_msg "Nginx is not installed."
         install_nginx
         nginx_include_apps_enabled "${NGINX_DEFAULT_SERVER}"
+
+        _assert_cert
+
+        info_msg "install: ${NGINX_DEFAULT_SERVER}"
+        install_template_src \
+            --no-eval \
+            "${SUITE_FOLDER}/nginx.conf" \
+            "${NGINX_DEFAULT_SERVER}" root root 644
+        nginx_reload
+
     fi
-    _assert_cert
 }
 
 _assert_cert() {
@@ -22,7 +31,8 @@ _assert_cert() {
                 pushd /etc/nginx/ssl >/dev/null
                 openssl req -new -x509 -nodes -newkey rsa:4096 -days 1095 \
                         -keyout server.key \
-                        -out server.crt
+                        -out server.crt \
+                        -batch
                 chmod 400 server.key
                 chmod 444 server.crt
                 # shellcheck disable=SC2164
