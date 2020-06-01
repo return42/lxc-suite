@@ -3,6 +3,7 @@
 # shellcheck shell=bash
 
 # https://github.com/matrix-org/synapse
+# https://github.com/vector-im/riot-web
 
 # ----------------------------------------------------------------------------
 # config
@@ -68,6 +69,12 @@ EOF
 
         rst_title "Install matrix reverse proxy"
         homeserver_install_reverse_proxy
+        wait_key
+
+        # shellcheck source=synapse-env/riot-web.sh
+        source "${SUITE_FOLDER}/riot-web.sh"
+        install_riot_web
+        riot_web_install_reverse_proxy
         wait_key
 
         rst_title "Create first account (admin)" section

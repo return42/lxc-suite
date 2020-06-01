@@ -25,6 +25,7 @@ _assert_cert() {
                         -out server.crt
                 chmod 400 server.key
                 chmod 444 server.crt
+                # shellcheck disable=SC2164
                 popd >/dev/null
             fi
             ;;
