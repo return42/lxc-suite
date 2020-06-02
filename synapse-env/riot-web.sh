@@ -1,8 +1,9 @@
-# -*- coding: utf-8; mode: sh indent-tabs-mode: nil -*-
+# -*- coding: utf-8; mode: sh; indent-tabs-mode: nil -*-
 # SPDX-License-Identifier: GNU General Public License v3.0 or later
 # shellcheck shell=bash
 
 nginx_static=/usr/share/nginx
+NGINX_RIOT_SITE="riot-web.conf"
 
 install_riot_web() {
     # https://github.com/vector-im/riot-web#getting-started
@@ -25,6 +26,9 @@ install_riot_web() {
         "${SUITE_FOLDER}/config.sample.json" \
         "${nginx_static}/riot-web/config.json" root root 644
     riot_web_config_init
+
+    nginx_install_app "${NGINX_RIOT_SITE}"
+
 }
 
 remove_riot_web() {
@@ -33,15 +37,6 @@ remove_riot_web() {
     rm -rf "${nginx_static}/riot-web"
 }
 
-riot_web_install_reverse_proxy() {
-
-    info_msg "install reverse proxy (riot-web.conf)"
-    install_template_src \
-        --no-eval \
-        "${SUITE_FOLDER}/riot-web.conf" \
-        "${NGINX_APPS_AVAILABLE}/riot-web.conf" root root 644
-    nginx_enable_app riot-web.conf
-}
 
 github_download_latest() {
 

@@ -688,7 +688,7 @@ database:
 # A yaml python logging config file as described by
 # https://docs.python.org/3.7/library/logging.config.html#configuration-dictionary-schema
 #
-log_config: "/usr/local/synapse/synapse-archlinux.log.config"
+log_config: "/etc/synapse/log_config.yaml"
 
 
 ## Ratelimiting ##
@@ -1104,7 +1104,7 @@ account_validity:
 # If set, allows registration of standard or admin accounts by anyone who
 # has the shared secret, even if registration is otherwise disabled.
 #
-registration_shared_secret: "LGNjbluGRy6tQgWW5LV~~&jN;9T2XLrHu_qscqsad3=d3fkw,H"
+registration_shared_secret: "0cq1iKr6OyYExhsiBBv5K^-OLmYgCpZWhR^Gdl2F5-DQ79y@,L"
 
 # Set the number of bcrypt rounds used to generate password hash.
 # Larger numbers increase the work factor needed to generate the hash.
@@ -1274,13 +1274,13 @@ report_stats: true
 # the registration_shared_secret is used, if one is given; otherwise,
 # a secret key is derived from the signing key.
 #
-macaroon_secret_key: "@=2@6@~&#HVXN8pG2U8wz~U+X.w3o3Bm5j8_5okp&TygmSGal~"
+macaroon_secret_key: "N-p*ZxR+oXr-jH8Wc@h8NGuEG5~Gb=jq.6U1UaBrTv6HiTcvqV"
 
 # a secret which is used to calculate HMACs for form values, to stop
 # falsification of values. Must be specified for the User Consent
 # forms to work.
 #
-form_secret: "7Jr-q6C&.76=H-q*1&r~8ZMUP2G+tEu3sE*IiQ5pA~kLMpGZh2"
+form_secret: "l_I&5G^JeX^*RRxzGfndA8dNUAL*2bvQH#HD3J;f^Kjuz*ZF3A"
 
 ## Signing Keys ##
 

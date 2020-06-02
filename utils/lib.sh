@@ -730,7 +730,7 @@ nginx_reload() {
 
 nginx_install_app() {
 
-    # usage:  nginx_install_app [<template option> ...] <myapp>
+    # usage:  nginx_install_app [<template option> ...] <myapp.conf>
     #
     # <template option>:   see install_template
 

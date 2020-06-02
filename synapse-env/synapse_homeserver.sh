@@ -1,4 +1,4 @@
-# -*- coding: utf-8; mode: sh indent-tabs-mode: nil -*-
+# -*- coding: utf-8; mode: sh; indent-tabs-mode: nil -*-
 # SPDX-License-Identifier: GNU General Public License v3.0 or later
 # shellcheck shell=bash
 
@@ -45,6 +45,8 @@ remove_synapse_homeserver(){
 synctl stop
 EOF
     userdel -r -f "${SERVICE_USER}" 2>&1 | prefix_stdout
+    info_msg "delete /etc/synapse/"
+    rm -f "/etc/synapse/"
 }
 
 homeserver_create_admin_account() {
@@ -61,18 +63,8 @@ homeserver_create_admin_account() {
 
         [[ -z $_passwd ]] && _passwd='admin'
 
-        info_msg "register_new_matrix_user -u admin -p xxxx -a -c ~/homeserver.yaml http://localhost:8008"
+        info_msg "register_new_matrix_user -u admin -p xxxx -a -c /etc/synapse/homeserver.yaml http://localhost:8008"
         sudo -H -u "${SERVICE_USER}" -i 2>&1 <<EOF | prefix_stdout "|$SERVICE_USER| "
-register_new_matrix_user -u admin -p "${_passwd}" -a -c ~/homeserver.yaml http://localhost:8008
+register_new_matrix_user -u admin -p "${_passwd}" -a -c /etc/synapse/homeserver.yaml http://localhost:8008
 EOF
-}
-
-homeserver_install_reverse_proxy() {
-
-    info_msg "install reverse proxy (matrix.conf)"
-    install_template_src \
-        --no-eval \
-        "${SUITE_FOLDER}/matrix.conf" \
-        "${NGINX_APPS_AVAILABLE}/matrix.conf" root root 644
-    nginx_enable_app matrix.conf
 }

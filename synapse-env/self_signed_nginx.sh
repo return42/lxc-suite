@@ -1,4 +1,4 @@
-# -*- coding: utf-8; mode: sh indent-tabs-mode: nil -*-
+# -*- coding: utf-8; mode: sh; indent-tabs-mode: nil -*-
 # SPDX-License-Identifier: GNU General Public License v3.0 or later
 # shellcheck shell=bash
 
@@ -14,10 +14,7 @@ install_self_signed_nginx() {
     _assert_cert
 
     info_msg "install: ${NGINX_DEFAULT_SERVER}"
-    install_template_src \
-        --no-eval \
-        "${SUITE_FOLDER}/nginx.conf" \
-        "${NGINX_DEFAULT_SERVER}" root root 644
+    install_template --no-eval "${NGINX_DEFAULT_SERVER}" root root 644
     nginx_reload
 }
 

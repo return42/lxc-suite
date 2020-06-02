@@ -1,4 +1,4 @@
-# -*- coding: utf-8; mode: sh indent-tabs-mode: nil -*-
+# -*- coding: utf-8; mode: sh; indent-tabs-mode: nil -*-
 # SPDX-License-Identifier: GNU General Public License v3.0 or later
 # shellcheck shell=bash
 
@@ -21,6 +21,8 @@ PUBLIC_URL="${PUBLIC_URL:-https://$(primary_ip)/_matrix/static/}"
 RIOT_PUBLIC_URL="${RIOT_PUBLIC_URL:-https://$(primary_ip)/riot/}"
 
 SUITE_FOLDER=$(dirname "${BASH_SOURCE[0]}")
+TEMPLATES="${SUITE_FOLDER}/templates"
+NGINX_SYNAPSE_SITE="matrix.conf"
 
 # ----------------------------------------------------------------------------
 # This file is a LXC suite.  It is sourced from different context, do not
@@ -44,13 +46,18 @@ suite_install(){
         FORCE_TIMEOUT=
 
         rst_title "Install synapse homeserver"
+        echo "The installation starts with setup of a HTTPS (self-signed) service."
+        # shellcheck source=synapse-env/self_signed_nginx.sh
+        source "${SUITE_FOLDER}/self_signed_nginx.sh"
+        install_self_signed_nginx
+        wait_key
 
         # shellcheck source=synapse-env/synapse_homeserver.sh
         source "${SUITE_FOLDER}/synapse_homeserver.sh"
         install_synapse_homeserver
         wait_key
 
-        rst_title "configure synapse homeserver.yaml" section
+        rst_title "configure synapse (/etc/synapse/)" section
         echo
         suite_service_user_shell <<EOF
 python -m synapse.app.homeserver \
@@ -59,27 +66,19 @@ python -m synapse.app.homeserver \
   --generate-config \
   --report-stats=yes
 EOF
-        install_template_src \
-            --no-eval \
-            "${SUITE_FOLDER}/homeserver.yaml" \
-            "${SERVICE_HOME}/homeserver.yaml" root root 644
+        mv "${SERVICE_HOME}/synapse-archlinux.log.config" "/etc/synapse/log_config.yaml"
+        install_template --no-eval "/etc/synapse/log_config.yaml" root root 644
 
-        tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1 |  prefix_stdout "|$SERVICE_USER| "
-synctl stop
-synctl start
-EOF
-        wait_key
+        mv "${SERVICE_HOME}/homeserver.yaml" "/etc/synapse/homeserver.yaml"
+        install_template --no-eval "/etc/synapse/homeserver.yaml" root root 644
 
-        rst_title "Install HTTPS (self-signed)"
-        echo
-        # shellcheck source=synapse-env/self_signed_nginx.sh
-        source "${SUITE_FOLDER}/self_signed_nginx.sh"
-        install_self_signed_nginx
+        install_template /usr/lib/tmpfiles.d/synapse.conf root root 644
+        systemd_install_service synapse /lib/systemd/system/synapse.service root root 644
         wait_key
 
         rst_title "Install matrix reverse proxy"
         echo
-        homeserver_install_reverse_proxy
+        nginx_install_app "${NGINX_SYNAPSE_SITE}"
         wait_key
 
         rst_title "Install riot-web"
@@ -87,7 +86,6 @@ EOF
         # shellcheck source=synapse-env/riot-web.sh
         source "${SUITE_FOLDER}/riot-web.sh"
         install_riot_web
-        riot_web_install_reverse_proxy
         wait_key
 
         rst_title "Create first account (admin)" section
@@ -135,6 +133,7 @@ suite_commands() {
 synapse_docs() {
     rst_title "Synapse suite"
     echo
+    local cmd_prefix="./${LXC_SUITE_NAME:-./suite <suite-name>} ${LXC_SUITE_IMAGE:-<image-name>}"
     cat <<EOF
 The synapse suite consits of:
 
@@ -168,11 +167,11 @@ Check (and backup) the configuration files in folder ${SERVICE_HOME}:
 
 To start bash from system user '$SERVICE_USER' use::
 
-  ./${LXC_SUITE_NAME:-./suite <suite-name>} ${LXC_SUITE_IMAGE:-<image-name>} bash
+  ./${cmd_prefix} bash
 
-To restart homeserver use::
+To get homeserver status use systemctl::
 
-  ./${LXC_SUITE_NAME:-./suite <suite-name>} ${LXC_SUITE_IMAGE:-<image-name>} synctl restart
+  ./${cmd_prefix} cmd systemctl status synapse
 
 EOF
 }
