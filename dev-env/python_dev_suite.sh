@@ -28,7 +28,7 @@ install_python_dev_suite(){
     wait_key
     info_msg "install developer tools .."
     suite_service_user_shell <<EOF
-pip install -U -r ${REPO_ROOT}/${LXC_SUITE_NAME}/py-req.txt
+pip install -U -r ${REPO_ROOT}/${LXC_SUITE_NAME}-env/py-req.txt
 EOF
     info_msg "to start ptpython for this user use::"
     info_msg "    sudo -H ./utils/lxc.sh cmd $(hostname) sudo -u $SERVICE_USER -i ptpython"
