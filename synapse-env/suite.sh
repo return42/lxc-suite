@@ -32,7 +32,7 @@ SUITE_FOLDER=$(dirname "${BASH_SOURCE[0]}")
 source "${REPO_ROOT}/base-env"
 
 lxc_set_suite_env() {
-    export LXC_HOST_PREFIX
+    export LXC_HOST_PREFIX="${LXC_SUITE_NAME}"
     export LXC_SUITE=(
         # rolling releases see https://www.archlinux.org/releng/releases/
         "images:archlinux"     "archlinux"
