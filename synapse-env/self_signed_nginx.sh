@@ -7,18 +7,18 @@ install_self_signed_nginx() {
     if ! nginx_is_installed; then
         info_msg "Nginx is not installed."
         install_nginx
-        nginx_include_apps_enabled "${NGINX_DEFAULT_SERVER}"
-
-        _assert_cert
-
-        info_msg "install: ${NGINX_DEFAULT_SERVER}"
-        install_template_src \
-            --no-eval \
-            "${SUITE_FOLDER}/nginx.conf" \
-            "${NGINX_DEFAULT_SERVER}" root root 644
-        nginx_reload
-
+    else
+        info_msg "Nginx is already installed."
     fi
+    nginx_include_apps_enabled "${NGINX_DEFAULT_SERVER}"
+    _assert_cert
+
+    info_msg "install: ${NGINX_DEFAULT_SERVER}"
+    install_template_src \
+        --no-eval \
+        "${SUITE_FOLDER}/nginx.conf" \
+        "${NGINX_DEFAULT_SERVER}" root root 644
+    nginx_reload
 }
 
 _assert_cert() {
@@ -37,6 +37,8 @@ _assert_cert() {
                 chmod 444 server.crt
                 # shellcheck disable=SC2164
                 popd >/dev/null
+            else
+                info_msg "cert already exists:  /etc/nginx/ssl/server.[key|crt]"
             fi
             ;;
         *)

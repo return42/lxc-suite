@@ -63,15 +63,19 @@ EOF
         wait_key
 
         rst_title "Install HTTPS (self-signed)"
+        echo
         # shellcheck source=synapse-env/self_signed_nginx.sh
         source "${SUITE_FOLDER}/self_signed_nginx.sh"
         install_self_signed_nginx
         wait_key
 
         rst_title "Install matrix reverse proxy"
+        echo
         homeserver_install_reverse_proxy
         wait_key
 
+        rst_title "Install riot-web"
+        echo
         # shellcheck source=synapse-env/riot-web.sh
         source "${SUITE_FOLDER}/riot-web.sh"
         install_riot_web

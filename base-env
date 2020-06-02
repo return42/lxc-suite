@@ -42,14 +42,6 @@ EOF
     )
 }
 
-suite_install() {
-    die 42 "[${LXC_SUITE_NAME}] Sorry, suite_install not yet implemented! (can't install)"
-}
-
-suite_uninstall() {
-    die 42 "[${LXC_SUITE_NAME}] Sorry, suite_uninstall not yet implemented! (can't un-install)"
-}
-
 lxc_suite_install() {
     (
         lxc_set_suite_env
@@ -83,15 +75,15 @@ lxc_suite_info() {
         echo
         for ip in $(global_IPs) ; do
             if [[ $ip =~ .*:.* ]]; then
-                info_msg "(${ip%|*}) IPv6:       http://[${ip#*|}]"
+                echo "(${ip%|*}) IPv6:       http://[${ip#*|}]"
             else
                 # IPv4:
                 # shellcheck disable=SC2034,SC2031
-                info_msg "(${ip%|*}) IPv4:       http://${ip#*|}"
+                echo "(${ip%|*}) IPv4:       http://${ip#*|}"
             fi
         done
-        info_msg "to start bash console use::"
-        info_msg "  ./${LXC_SUITE_NAME:-./suite <suite-name>} ${LXC_SUITE_IMAGE:-<image-name>}  bash"
+        echo "to start bash console use::"
+        echo "  ./${LXC_SUITE_NAME:-./suite <suite-name>} ${LXC_SUITE_IMAGE:-<image-name>}  bash"
     )
 }
 
@@ -179,4 +171,12 @@ suite_main_cmd(){
         fi
         lxc_exec_cmd "$container" sudo -u "${SERVICE_USER:-root}" -i bash -c \""$*"\"
     )
+}
+
+suite_install() {
+    die 42 "[${LXC_SUITE_NAME}] Sorry, suite_install not yet implemented! (can't install)"
+}
+
+suite_uninstall() {
+    die 42 "[${LXC_SUITE_NAME}] Sorry, suite_uninstall not yet implemented! (can't un-install)"
 }
