@@ -180,3 +180,32 @@ suite_install() {
 suite_uninstall() {
     die 42 "[${LXC_SUITE_NAME}] Sorry, suite_uninstall not yet implemented! (can't un-install)"
 }
+
+suite_commands_usage() {
+    _cmd="./${LXC_SUITE_NAME} ${LXC_SUITE_IMAGE}"
+    cat <<EOF
+usage:
+  $_cmd -- [docs]
+
+docs:  print documentation of the suite
+EOF
+}
+
+suite_commands() {
+    local container="$LXC_HOST_PREFIX-$LXC_SUITE_IMAGE"
+    case $1 in
+        docs)
+            ! lxc_exists "$container" \
+                && die 42 "container '$container' don't exists"
+            lxc_exec_cmd "$container" "${LXC_REPO_ROOT}/utils/lxc.sh" __show suite
+            ;;
+        *)
+            suite_commands_usage
+            if [[ -z "$*" ]]; then
+                die 42 "missing '{ command .. }'"
+            else
+                die 42 "command: '$*' is not a suite command"
+            fi
+            ;;
+    esac
+}

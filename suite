@@ -30,6 +30,7 @@ usage::
   $_cmd uninstall [suite]
   $_cmd show [images|suite|info|config]
   $_cmd root
+  $_cmd --
 
 create:
   Build container from image $LXC_SUITE_IMAGE and install suite $LXC_SUITE_NAME.
@@ -60,6 +61,8 @@ show:
   :images:       show information of the image
 root:
   start a bash for user root in the container
+--:
+  run additional commands from suite
 EOF
     if [[ $LXC_SUITE_NAME == "<suite-name>" ]]; then
         echo "LXC suites:"
@@ -115,7 +118,7 @@ suite_main() {
 
     sudo_or_exit
 
-    container="$LXC_HOST_PREFIX-$LXC_SUITE_IMAGE"
+    local container="$LXC_HOST_PREFIX-$LXC_SUITE_IMAGE"
     case $1 in
         drop|root|pkg-*)
             if ! lxc_exists "$container";then
@@ -195,6 +198,10 @@ suite_main() {
                 die 42 "missing '{ command .. }'"
             fi
             lxc_exec_cmd "$container" 'source "./utils/lib.sh";' "$@"
+            ;;
+        --)
+            shift
+            suite_commands "$@"
             ;;
         *)
             if [[ -z "$*" ]]; then
