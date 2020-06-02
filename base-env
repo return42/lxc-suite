@@ -51,7 +51,7 @@ lxc_suite_install() {
         rst_title "install suite '${LXC_SUITE_NAME}' ($(hostname))" part
         echo
         suite_install
-        rst_title "suite '${LXC_SUITE_NAME}' installation finished ($(hostname))"
+        info_msg "suite '${LXC_SUITE_NAME}' installation finished ($(hostname))"
         lxc_suite_info
         echo
     )

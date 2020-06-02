@@ -177,7 +177,6 @@ lxc_suite_info() {
         cat <<EOF
 - homeserver is listening on: ${PUBLIC_URL}
 - Riot WEB client at:         ${RIOT_PUBLIC_URL}
-
 EOF
     )
 }
