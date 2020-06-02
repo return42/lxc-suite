@@ -50,7 +50,7 @@ drop:
   Execute { command .. } as user '${SERVICE_USER:-root}' in container $LXC_SUITE_IMAGE
   from suite $LXC_SUITE_NAME.
 cmd { command .. }:
-  Execute { command .. } in root's bash with './utils/lib.sh'  sourced.
+  Execute { command .. } in root's bash with './utils/lib.sh' sourced.
 pkg-install / pkg-remove { pkg-name .. }:
   Install / remove packages { pkg-name .. } in container from image
   $LXC_SUITE_IMAGE (suite $LXC_SUITE_NAME)
