@@ -191,13 +191,16 @@ docs:  print documentation of the suite
 EOF
 }
 
-suite_commands() {
+__suite_commands() {
     local container="$LXC_HOST_PREFIX-$LXC_SUITE_IMAGE"
     case $1 in
         docs)
-            ! lxc_exists "$container" \
-                && die 42 "container '$container' don't exists"
-            lxc_exec_cmd "$container" "${LXC_REPO_ROOT}/utils/lxc.sh" __show suite
+            [[ $LXC_SUITE_IMAGE == '<suite-image>' ]] \
+                && die 42 "container does not exists"
+            rst_title "services of $container"
+            lxc_exec_cmd \
+                "$container" "${LXC_REPO_ROOT}/utils/lxc.sh" \
+                __show suite 2>/dev/null
             ;;
         *)
             suite_commands_usage
@@ -208,4 +211,8 @@ suite_commands() {
             fi
             ;;
     esac
+}
+
+suite_commands() {
+    __suite_commands "$@"
 }
