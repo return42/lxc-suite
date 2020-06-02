@@ -31,6 +31,14 @@ SUITE_FOLDER=$(dirname "${BASH_SOURCE[0]}")
 # shellcheck source=base-env
 source "${REPO_ROOT}/base-env"
 
+lxc_set_suite_env() {
+    export LXC_HOST_PREFIX
+    export LXC_SUITE=(
+        # rolling releases see https://www.archlinux.org/releng/releases/
+        "images:archlinux"     "archlinux"
+    )
+}
+
 suite_install(){
     (
         FORCE_TIMEOUT=

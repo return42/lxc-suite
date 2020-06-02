@@ -144,7 +144,7 @@ Predefined suites
 .. _synapse-py-req: https://github.com/return42/lxc-suite/blob/master/synapse-py-req.txt
 .. _synapse: https://github.com/matrix-org/synapse
 
-``./synapse`` : *WIP*
+``./synapse`` : archlinux
   Suite for prototyping with a synapse_ *homeserver*.::
 
     ./dev archlinux create
