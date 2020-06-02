@@ -107,23 +107,44 @@ suite_uninstall() {
     )
 }
 
-lxc_suite_info() {
-    (
-        FORCE_TIMEOUT=
-        lxc_set_suite_env
-        cat <<EOF
+suite_commands() {
+    local container="$LXC_HOST_PREFIX-$LXC_SUITE_IMAGE"
+    case $1 in
+        docs)
+            synapse_docs
+            [[ $LXC_SUITE_IMAGE != '<suite-image>' ]] \
+                && lxc_exec_cmd \
+                       "$container" "${LXC_REPO_ROOT}/utils/lxc.sh" \
+                       __show suite 2>/dev/null
+            ;;
+        *)
+            __suite_commands "$@"
+            ;;
+    esac
+}
 
-Login as system user '$SERVICE_USER' and use::
+
+synapse_docs() {
+    rst_title "Synapse suite"
+    echo
+    cat <<EOF
+The synapse suite consits of:
+
+- synapse homeserver: https://github.com/matrix-org/synapse
+- riot-web client: https://github.com/vector-im/riot-web
+- self-signed nginx HTTPS server (nginx.conf)
+- nginx reverse proxy for the matrix homeserver (matrix.conf) and the riot-web
+  client (riot-web.conf)
+
+To manage synapse homeserver, login as system user '$SERVICE_USER' and use::
 
   synctl --help
 
-to manage the synapse homeserver.  Check (backup) the configuration files in
-folder ${SERVICE_HOME}:
+Check (and backup) the configuration files in folder ${SERVICE_HOME}:
 
 - synapse-archlinux.log.config
 - synapse-archlinux.signing.key: Make a *safe* backup!
-
-- homeserver.yaml; setup for a *test* environment::
+- homeserver.yaml: setup for a *test* environment::
 
     listeners:
       ...
@@ -137,7 +158,7 @@ folder ${SERVICE_HOME}:
       - names: [client, federation]
         compress: false
 
-To start bash as '$SERVICE_USER'::
+To start bash from system user '$SERVICE_USER' use::
 
   ./${LXC_SUITE_NAME:-./suite <suite-name>} ${LXC_SUITE_IMAGE:-<image-name>} bash
 
@@ -145,10 +166,18 @@ To restart homeserver use::
 
   ./${LXC_SUITE_NAME:-./suite <suite-name>} ${LXC_SUITE_IMAGE:-<image-name>} synctl restart
 
+EOF
+}
+
+
+lxc_suite_info() {
+    (
+        FORCE_TIMEOUT=
+        lxc_set_suite_env
+        cat <<EOF
 - homeserver is listening on: ${PUBLIC_URL}
 - Riot WEB client at:         ${RIOT_PUBLIC_URL}
 
 EOF
-        wait_key
     )
 }
