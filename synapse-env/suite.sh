@@ -17,11 +17,11 @@ SERVICE_GROUP="${SERVICE_USER}"
 SERVICE_PYENV="${SERVICE_HOME}/pyenv"
 
 LXC_SUITE_NAME="synapse"
-PUBLIC_URL="${PUBLIC_URL:-https://$(primary_ip)/_matrix/static/}"
-RIOT_PUBLIC_URL="${RIOT_PUBLIC_URL:-https://$(primary_ip)/riot/}"
+PUBLIC_URL="${PUBLIC_URL:-https://$(primary_ip)/_matrix}"
+RIOT_PUBLIC_URL="${RIOT_PUBLIC_URL:-https://$(primary_ip)/riot}"
 
 SUITE_FOLDER=$(dirname "${BASH_SOURCE[0]}")
-TEMPLATES="${SUITE_FOLDER}/templates"
+export TEMPLATES="${SUITE_FOLDER}/templates"
 NGINX_SYNAPSE_SITE="matrix.conf"
 
 # ----------------------------------------------------------------------------
@@ -39,6 +39,10 @@ lxc_set_suite_env() {
         # rolling releases see https://www.archlinux.org/releng/releases/
         "images:archlinux"     "archlinux"
     )
+}
+
+_create_key() {
+    tr -dc 'a-zA-Z0-9' < /dev/urandom | fold -w 32 | head -n 1
 }
 
 suite_install(){
@@ -69,13 +73,14 @@ python -m synapse.app.homeserver \
   --generate-config \
   --report-stats=yes
 EOF
+        mkdir -p "/etc/synapse"
         mv "${SERVICE_HOME}/synapse-archlinux.log.config" "/etc/synapse/log_config.yaml"
         mv "${SERVICE_HOME}/homeserver.yaml" "/etc/synapse/homeserver.yaml"
 
         rst_para "Install configuration files from templates"
         wait_key
         install_template --no-eval "/etc/synapse/log_config.yaml" root root 644
-        install_template --no-eval "/etc/synapse/homeserver.yaml" root root 644
+        install_template "/etc/synapse/homeserver.yaml" root root 644
 
         install_template /usr/lib/tmpfiles.d/synapse.conf root root 644
         systemd_install_service synapse /lib/systemd/system/synapse.service root root 644
@@ -145,42 +150,37 @@ synapse_docs() {
     cat <<EOF
 The synapse suite consits of:
 
+- self-signed nginx HTTPS server (nginx.conf)
 - synapse homeserver: https://github.com/matrix-org/synapse
 - riot-web client: https://github.com/vector-im/riot-web
-- self-signed nginx HTTPS server (nginx.conf)
 - nginx reverse proxy for the matrix homeserver (matrix.conf) and the riot-web
   client (riot-web.conf)
 
-To manage synapse homeserver, login as system user '$SERVICE_USER' and use::
-
-  synctl --help
-
 Check (and backup) the configuration files in folder ${SERVICE_HOME}:
 
-- synapse-archlinux.log.config
-- synapse-archlinux.signing.key: Make a *safe* backup!
-- homeserver.yaml: setup for a *test* environment::
-
-    listeners:
-      ...
-      - port: 8008
-        tls: false
-        type: http
-        x_forwarded: true
-        bind_addresses: ['127.0.0.1']
-    ...
-    resources:
-      - names: [client, federation]
-        compress: false
+- /etc/synapse/log_config.yaml
+- /etc/synapse/homeserver.yaml
+- /usr/local/synapse/synapse-archlinux.signing.key
 
 To start bash from system user '$SERVICE_USER' use::
 
-  ./${cmd_prefix} bash
+  ${cmd_prefix} bash
 
 To get homeserver status use systemctl::
 
-  ./${cmd_prefix} cmd systemctl status synapse
+  ${cmd_prefix} cmd systemctl status synapse
+  ${cmd_prefix} cmd journalctl -xe
 
+Homerserver log is available from::
+
+  ${cmd_prefix} tail -f /usr/local/synapse/homeserver.log
+
+To stop systemd service and start homeserver on command line::
+
+  ${cmd_prefix} cmd systemctl stop synapse
+  ${cmd_prefix} python -m synapse.app.homeserver --config-path=/etc/synapse/homeserver.yaml
+
+If federation is enabled, test: https://federationtester.matrix.org
 EOF
 }
 
@@ -190,8 +190,13 @@ lxc_suite_info() {
         FORCE_TIMEOUT=
         lxc_set_suite_env
         cat <<EOF
-- homeserver is listening on: ${PUBLIC_URL}
-- Riot WEB client at:         ${RIOT_PUBLIC_URL}
+
+synapse homeserver:
+  - ${PUBLIC_URL}/static
+  - ${PUBLIC_URL}/client/versions
+Riot WEB client at:
+  - ${RIOT_PUBLIC_URL}
+
 EOF
     )
 }
