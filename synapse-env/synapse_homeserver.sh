@@ -54,7 +54,7 @@ homeserver_create_admin_account() {
         while true; do
             read -r -s -p "Enter password for user 'admin': [admin]" _passwd
             echo
-            read -r -s -p "validate password: " _passwd2
+            read -r -s -p "validate password: [ENTER]" _passwd2
             echo
             if [[ "$_passwd" == "$_passwd2" ]]; then
                 break

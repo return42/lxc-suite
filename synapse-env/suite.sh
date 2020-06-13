@@ -45,20 +45,23 @@ suite_install(){
     (
         FORCE_TIMEOUT=
 
-        rst_title "Install synapse homeserver"
-        echo "The installation starts with setup of a HTTPS (self-signed) service."
+        rst_title "HTTPS (self-signed)"
+        rst_para "Synapse installation starts with setting up a HTTPS service."
+        wait_key
         # shellcheck source=synapse-env/self_signed_nginx.sh
         source "${SUITE_FOLDER}/self_signed_nginx.sh"
         install_self_signed_nginx
         wait_key
 
+        rst_title "Installing synapse homeserver"
         # shellcheck source=synapse-env/synapse_homeserver.sh
         source "${SUITE_FOLDER}/synapse_homeserver.sh"
         install_synapse_homeserver
         wait_key
 
         rst_title "configure synapse (/etc/synapse/)" section
-        echo
+        rst_para "generate default config files"
+        wai_key
         suite_service_user_shell <<EOF
 python -m synapse.app.homeserver \
   --server-name $(hostname) \
@@ -67,9 +70,11 @@ python -m synapse.app.homeserver \
   --report-stats=yes
 EOF
         mv "${SERVICE_HOME}/synapse-archlinux.log.config" "/etc/synapse/log_config.yaml"
-        install_template --no-eval "/etc/synapse/log_config.yaml" root root 644
-
         mv "${SERVICE_HOME}/homeserver.yaml" "/etc/synapse/homeserver.yaml"
+
+        rst_para "Install configuration files from templates"
+        wait_key
+        install_template --no-eval "/etc/synapse/log_config.yaml" root root 644
         install_template --no-eval "/etc/synapse/homeserver.yaml" root root 644
 
         install_template /usr/lib/tmpfiles.d/synapse.conf root root 644
@@ -92,6 +97,9 @@ EOF
         echo
         homeserver_create_admin_account
         wait_key
+
+        rst_title "Synapse homeserver installed"
+        echo
     )
 }
 
