@@ -20,7 +20,9 @@ install_riot_web() {
     rm -rf "${nginx_static}/riot-web"
     mv "${nginx_static}/${tar_folder}" "${nginx_static}/riot-web"
 
-    info_msg "install riot-web config (config.json)"
+    info_msg "install riot-web config (config.json), further read .."
+    info_msg "  https://github.com/vector-im/riot-web/blob/develop/docs/config.md"
+
     install_template_src \
         --no-eval \
         "${SUITE_FOLDER}/config.sample.json" \

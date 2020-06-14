@@ -151,6 +151,13 @@ suite_commands() {
 synapse_docs() {
     rst_title "Synapse suite"
     echo
+    # shellcheck source=synapse-env/self_signed_nginx.sh
+    source "${SUITE_FOLDER}/self_signed_nginx.sh"
+    # shellcheck source=synapse-env/synapse_homeserver.sh
+    source "${SUITE_FOLDER}/synapse_homeserver.sh"
+    # shellcheck source=synapse-env/riot-web.sh
+    source "${SUITE_FOLDER}/riot-web.sh"
+
     local cmd_prefix="./${LXC_SUITE_NAME:-./suite <suite-name>} ${LXC_SUITE_IMAGE:-<image-name>}"
     cat <<EOF
 The synapse suite consits of:
@@ -161,11 +168,15 @@ The synapse suite consits of:
 - nginx reverse proxy for the matrix homeserver (matrix.conf) and the riot-web
   client (riot-web.conf)
 
-Check (and backup) the configuration files in folder ${SERVICE_HOME}:
+Check (and backup) homeserver's configuration files in folder ${SERVICE_HOME}:
 
 - /etc/synapse/log_config.yaml
 - /etc/synapse/homeserver.yaml
 - /usr/local/synapse/synapse-archlinux.signing.key
+
+Check (and backup) riot-web's configuration files in folder ${nginx_static}/riot-web:
+
+- ${nginx_static}/riot-web/config.json
 
 To start bash from system user '$SERVICE_USER' use::
 
