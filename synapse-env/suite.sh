@@ -86,6 +86,11 @@ EOF
         systemd_install_service synapse /lib/systemd/system/synapse.service root root 644
         wait_key
 
+        rst_title "Install .well-known/matrix/server"
+        # https://github.com/matrix-org/synapse/blob/develop/docs/delegate.md#well-known-delegation
+        mkdir -p /usr/share/nginx/.well-known/matrix
+        echo "{ \"m.server\": \"${PUBLIC_URL}\" }" > /usr/share/nginx/.well-known/matrix/server
+
         rst_title "Install matrix reverse proxy"
         echo
         nginx_install_app "${NGINX_SYNAPSE_SITE}"
@@ -191,12 +196,12 @@ lxc_suite_info() {
         lxc_set_suite_env
         cat <<EOF
 
-synapse homeserver:
+Synapse homeserver:
   - ${PUBLIC_URL}/static
   - ${PUBLIC_URL}/client/versions
+
 Riot WEB client at:
   - ${RIOT_PUBLIC_URL}
-
 EOF
     )
 }
