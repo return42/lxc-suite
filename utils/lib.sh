@@ -1374,7 +1374,7 @@ git_clone() {
         tee_stderr 0.1 <<EOF | $bash_cmd 2>&1 |  prefix_stdout "  ${_Yellow}|$user|${_creset} "
 cd "${dest}"
 git checkout -m -B "$branch" --track "$remote/$branch"
-git pull --all
+git pull --all --no-rebase
 EOF
     else
         info_msg "clone into: $dest"

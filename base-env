@@ -47,13 +47,19 @@ lxc_suite_install() {
         lxc_set_suite_env
         FORCE_TIMEOUT=0
         export FORCE_TIMEOUT
+        local ret_val=0
 
         rst_title "install suite '${LXC_SUITE_NAME}' ($(hostname))" part
-        echo
         suite_install
-        info_msg "suite '${LXC_SUITE_NAME}' installation finished ($(hostname))"
-        lxc_suite_info
+        ret_val=$?
+        if [[ $ret_val == 0 ]]; then
+            info_msg "suite '${LXC_SUITE_NAME}' installation finished ($(hostname))"
+            lxc_suite_info
+        else
+            err_msg "got exit code $ret_val from installation procedure"
+        fi
         echo
+        return $ret_val
     )
 }
 
@@ -62,10 +68,13 @@ lxc_suite_uninstall() {
         lxc_set_suite_env
         FORCE_TIMEOUT=0
         export FORCE_TIMEOUT
+        local ret_val=0
 
         rst_title "uninstall suite '${LXC_SUITE_NAME}' ($(hostname))" part
         echo
         suite_uninstall
+        ret_val=$?
+        return $ret_val
     )
 }
 
@@ -82,8 +91,13 @@ lxc_suite_info() {
                 echo "(${ip%|*}) IPv4:       http://${ip#*|}"
             fi
         done
-        echo "to start bash console use::"
-        echo "  ./${LXC_SUITE_NAME:-./suite <suite-name>} ${LXC_SUITE_IMAGE:-<image-name>}  bash"
+        local cmd_prefix="./${LXC_SUITE_NAME:-./suite <suite-name>} ${LXC_SUITE_IMAGE:-<image-name>}"
+        echo
+        echo "Start a interactive bash (root) using::"
+        echo "    ${cmd_prefix} root"
+        echo
+        echo "Start a interactive bash ($SERVICE_USER) using::"
+        echo "    ${cmd_prefix} bash"
     )
 }
 
@@ -99,8 +113,10 @@ mkdir "$SERVICE_HOME"
 chown -R "$SERVICE_GROUP:$SERVICE_GROUP" "$SERVICE_HOME"
 groups $SERVICE_USER
 EOF
+        local cmd_prefix="./${LXC_SUITE_NAME:-./suite <suite-name>} ${LXC_SUITE_IMAGE:-<image-name>}"
+
         info_msg "to start bash for this user use::"
-        info_msg "    sudo -H ./utils/lxc.sh cmd $(hostname) sudo -u $SERVICE_USER -i bash"
+        info_msg "    ${cmd_prefix} bash"
     )
 }
 
@@ -130,9 +146,11 @@ EOF
 
 suite_service_user_shell(){
     # shellcheck disable=SC2154
+
     tee_stderr 0.1 \
         | sudo -H -u "${SERVICE_USER}" -i 2>&1 \
         |  prefix_stdout "${_Yellow}|${SERVICE_USER}|${_creset} "
+    return "${PIPESTATUS[1]}"
 }
 
 suite_root_shell(){
