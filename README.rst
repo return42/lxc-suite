@@ -155,6 +155,17 @@ Predefined suites
   - bash (``synapse``) -- usage: ``./dev archlinux bash``
 
 
+``./jitsi`` : ubu2004, fedora31, archlinux
+  Suite for developing within `jitsi projects`_, to create developer environment
+  for your prefered distribution use one of::
+
+    ./dev archlinux ubu2004 create
+    ./dev archlinux fedora31 create
+    ./dev archlinux archlinux create
+
+
+.. _jitsi projects: https://jitsi.org/projects/
+
 .. _create new suites:
 
 Create new suites
