@@ -51,20 +51,20 @@ EOF
 
 homeserver_create_admin_account() {
 
-        while true; do
-            read -r -s -p "Enter password for user 'admin': [admin]" _passwd
-            echo
-            read -r -s -p "validate password: [ENTER]" _passwd2
-            echo
-            if [[ "$_passwd" == "$_passwd2" ]]; then
-                break
-            fi
-        done
+    while true; do
+        read -r -s -p "Enter password for user 'admin': [admin]" _passwd
+        echo
+        read -r -s -p "validate password: [ENTER]" _passwd2
+        echo
+        if [[ "$_passwd" == "$_passwd2" ]]; then
+            break
+        fi
+    done
 
-        [[ -z $_passwd ]] && _passwd='admin'
+    [[ -z $_passwd ]] && _passwd='admin'
 
-        info_msg "register_new_matrix_user -u admin -p xxxx -a -c /etc/synapse/homeserver.yaml http://localhost:8008"
-        sudo -H -u "${SERVICE_USER}" -i 2>&1 <<EOF | prefix_stdout "|$SERVICE_USER| "
+    info_msg "register_new_matrix_user -u admin -p xxxx -a -c /etc/synapse/homeserver.yaml http://localhost:8008"
+    sudo -H -u "${SERVICE_USER}" -i 2>&1 <<EOF | prefix_stdout "|$SERVICE_USER| "
 register_new_matrix_user -u admin -p "${_passwd}" -a -c /etc/synapse/homeserver.yaml http://localhost:8008
 EOF
 }
