@@ -2,6 +2,9 @@
 # SPDX-License-Identifier: GNU General Public License v3.0 or later
 # shellcheck shell=bash
 
+# https://matrix.org/blog/2020/04/06/running-your-own-secure-communication-service-with-matrix-and-jitsi#riotweb
+# https://github.com/PC-Admin/PC-Admins-Synapse-Setup-Guide
+
 nginx_static=/usr/share/nginx
 NGINX_RIOT_SITE="riot-web.conf"
 
