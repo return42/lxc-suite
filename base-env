@@ -45,7 +45,6 @@ EOF
 lxc_suite_install() {
     (
         lxc_set_suite_env
-        export FORCE_TIMEOUT
         local ret_val=0
 
         rst_title "install suite '${LXC_SUITE_NAME}' ($(hostname))" part
@@ -65,7 +64,6 @@ lxc_suite_install() {
 lxc_suite_uninstall() {
     (
         lxc_set_suite_env
-        export FORCE_TIMEOUT
         local ret_val=0
 
         rst_title "uninstall suite '${LXC_SUITE_NAME}' ($(hostname))" part
