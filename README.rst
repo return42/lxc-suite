@@ -9,7 +9,8 @@
 |lxc-suite logo|
 
 **LXC suites** helps you to organize your basic development and build tasks in
-**L**\ inu\ **X**  **C**\ ontainers.
+**L**\ inu\ **X** **C**\ ontainers / written in pure bash, except lxd no
+knick-knack is needed :)
 
 |License| |Issues|  |PR|  |commits|
 
@@ -325,9 +326,9 @@ This evaluates to::
 ``FORCE_TIMEOUT``
 =================
 
-Scripts from the lxc-suites do often implement choices, asking you *do you want
-to do this or that?*.  Those selections do also implement a forced default
-answer.  To drive in real batch mode set environment to zero::
+Scripts from the lxc-suites do often implement choices, asking you *"do you want
+to do this or that?"*.  Those selections do also implement a forced default
+answer.  To drive batch processing set environment to zero::
 
   export FORCE_TIMEOUT=0
 
