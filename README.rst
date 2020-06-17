@@ -6,8 +6,10 @@
 
 ----
 
-|lxc-suite logo| **LXC suites** helps you to organize your basic development and
-build tasks in LinuX-Containers.
+|lxc-suite logo|
+
+**LXC suites** helps you to organize your basic development and build tasks in
+**L**\ inu\ **X**  **C**\ ontainers.
 
 |License| |Issues|  |PR|  |commits|
 
