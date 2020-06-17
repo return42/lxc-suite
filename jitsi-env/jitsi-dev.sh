@@ -9,9 +9,18 @@ source "${REPO_ROOT}/utils/lib.sh"
 
 # https://stackoverflow.com/questions/32295168/make-jitsi-meet-work-with-apache-on-a-sub-url
 
-jitsi_build() {
-    rst_title "build jitsi (npm-install & make)"
+jitsi_build_meet() {
+    rst_title "build jitsi-meet"
     pushd ~/jitsi-meet  >/dev/null || die 43 "missing jitsi-meet clone"
     npm install
     make
+    popd >/dev/null || die 43 "something went wrong"
+}
+
+jitsi_build_handbook() {
+    rst_title "build jitsi-handbook"
+    pushd ~/jitsi-handbook/website  >/dev/null || die 43 "missing jitsi-handbook clone"
+    npm install
+    echo "for live reloading use:: cd ~/jitsi-handbook/website; npm start"
+    popd >/dev/null || die 43 "something went wrong"
 }

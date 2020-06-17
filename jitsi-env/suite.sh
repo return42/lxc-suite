@@ -49,14 +49,20 @@ suite_install(){
         assert_user
         wait_key
 
-        rst_title "getting jitsi source"
+        rst_title "getting jitsi sources"
+
         git_clone "https://github.com/jitsi/jitsi-meet" \
                   "${SERVICE_HOME}/jitsi-meet" master\
                   "${SERVICE_USER}"
 
+        git_clone "https://github.com/jitsi/handbook" \
+                  "${SERVICE_HOME}/jitsi-handbook" master\
+                  "${SERVICE_USER}"
+
         sudo -H -u "${SERVICE_USER}" -i <<EOF
 source "${LXC_REPO_ROOT}/jitsi-env/jitsi-dev.sh"
-jitsi_build
+jitsi_build_meet
+jitsi_build_handbook
 EOF
     )
 }
