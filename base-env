@@ -45,7 +45,6 @@ EOF
 lxc_suite_install() {
     (
         lxc_set_suite_env
-        FORCE_TIMEOUT=0
         export FORCE_TIMEOUT
         local ret_val=0
 
@@ -66,7 +65,6 @@ lxc_suite_install() {
 lxc_suite_uninstall() {
     (
         lxc_set_suite_env
-        FORCE_TIMEOUT=0
         export FORCE_TIMEOUT
         local ret_val=0
 

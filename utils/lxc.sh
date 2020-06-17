@@ -291,7 +291,7 @@ main() {
             # shellcheck disable=SC2119
             case $2 in
                 suite) lxc_suite_install ;;
-                base) FORCE_TIMEOUT=0 lxc_install_base_packages ;;
+                base) lxc_install_base_packages ;;
             esac
             ;;
         __uninstall)
@@ -359,8 +359,7 @@ build_container() {
     lxc_install_boilerplate "${container}" "$boilerplate_script"
     echo
     rst_title "install LXC base packages" section
-    lxc_exec_cmd "${container}" "${LXC_REPO_ROOT}/utils/lxc.sh" __install base \
-        | prefix_stdout "[${_BBlue}${container}${_creset}] "
+    lxc_exec_cmd "${container}" "${LXC_REPO_ROOT}/utils/lxc.sh" __install base
     echo
     lxc list "$container"
 }
@@ -467,9 +466,14 @@ lxc_exec_cmd() {
     local name="$1"
     shift
     exit_val=
-    info_msg "[${_BBlue}${name}${_creset}] ${_BGreen}export LXC_ENV=$LXC_ENV LXC_SUITE_IMAGE=$LXC_SUITE_IMAGE${_creset}"
+    info_msg "[${_BBlue}${name}${_creset}] ${_BGreen}export FORCE_TIMEOUT=$FORCE_TIMEOUT LXC_ENV=$LXC_ENV LXC_SUITE_IMAGE=$LXC_SUITE_IMAGE${_creset}"
     info_msg "[${_BBlue}${name}${_creset}] ${_BGreen}${*}${_creset}"
-    lxc exec -t --env "LXC_ENV=$LXC_ENV" --env "LXC_SUITE_IMAGE=$LXC_SUITE_IMAGE" --cwd "${LXC_REPO_ROOT}" "${name}" -- bash -c "$*"
+    lxc exec -t \
+        --env "FORCE_TIMEOUT=$FORCE_TIMEOUT" \
+        --env "LXC_ENV=$LXC_ENV" \
+        --env "LXC_SUITE_IMAGE=$LXC_SUITE_IMAGE" \
+        --cwd "${LXC_REPO_ROOT}" "${name}" \
+        -- bash -c "$*"
     exit_val=$?
     if [[ $exit_val -ne 0 ]]; then
         warn_msg "[${_BBlue}${name}${_creset}] exit code (${_BRed}${exit_val}${_creset}) from ${_BGreen}${*}${_creset}"
@@ -483,7 +487,7 @@ lxc_exec() {
         if ! lxc_exists "$i"; then
             warn_msg "container ${_BBlue}$i${_creset} does not yet exists"
         else
-            lxc_exec_cmd "${i}" "$@" | prefix_stdout "[${_BBlue}${i}${_creset}] "
+            lxc_exec_cmd "${i}" "$@"
         fi
     done
 }

@@ -33,8 +33,6 @@ suite_install(){
         # make re-install and remove any previous installation
         suite_uninstall
 
-        FORCE_TIMEOUT=
-
         # shellcheck source=dev-env/python_dev_suite.sh
         source "${SUITE_FOLDER}/python_dev_suite.sh"
         install_python_dev_suite
@@ -43,8 +41,6 @@ suite_install(){
 
 suite_uninstall(){
     (
-        FORCE_TIMEOUT=
-
         # shellcheck source=dev-env/python_dev_suite.sh
         source "${SUITE_FOLDER}/python_dev_suite.sh"
         uninstall_python_dev_suite

@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
 # -*- coding: utf-8; mode: sh indent-tabs-mode: nil -*-
 
-sudo -H "LXC_ENV=$LXC_ENV" "$(dirname "${BASH_SOURCE[0]}")/utils/lxc.sh" "$@"
+sudo -H \
+     "FORCE_TIMEOUT=${FORCE_TIMEOUT:-0}" \
+     "LXC_ENV=$LXC_ENV" \
+     "LXC_SUITE_IMAGE=$LXC_SUITE_IMAGE" \
+     "$(dirname "${BASH_SOURCE[0]}")/utils/lxc.sh" "$@"

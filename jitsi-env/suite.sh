@@ -30,7 +30,6 @@ source "${REPO_ROOT}/base-env"
 suite_install(){
     (
 
-        FORCE_TIMEOUT=
         case $DIST_ID-$DIST_VERS in
             ubuntu-*|debian-*)
                 pkg_install build-essential npm
@@ -64,7 +63,6 @@ EOF
 
 suite_uninstall(){
     (
-        FORCE_TIMEOUT=
         userdel -r -f "${SERVICE_USER}" 2>&1 | prefix_stdout
     )
 }

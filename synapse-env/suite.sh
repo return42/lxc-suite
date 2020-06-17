@@ -47,8 +47,6 @@ _create_key() {
 
 suite_install(){
     (
-        FORCE_TIMEOUT=
-
         rst_title "HTTPS (self-signed)"
         rst_para "Synapse installation starts with setting up a HTTPS service."
         wait_key
@@ -116,8 +114,6 @@ EOF
 
 suite_uninstall() {
     (
-        FORCE_TIMEOUT=
-
         # shellcheck source=synapse-env/synapse_homeserver.sh
         source "${SUITE_FOLDER}/synapse_homeserver.sh"
         nginx_remove_app matrix.conf

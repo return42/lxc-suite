@@ -6,7 +6,8 @@
 
 ----
 
-|lxc-suite logo|
+|lxc-suite logo| **LXC suites** helps you to organize your basic development and
+build tasks in LinuX-Containers.
 
 |License| |Issues|  |PR|  |commits|
 
@@ -46,6 +47,9 @@ Or start any other command::
     /usr/local/dev-user
     INFO:  [dev-archlinux] exit code (0) from sudo -u dev-user -i bash -c "pwd"
 
+In the next step, take a look at `predefined suites`_ and for build hosts the
+lxc_ command (*lxc-suite's porcelain*)  might be interesting.
+
 
 .. _suite:
 
@@ -65,9 +69,9 @@ context of a *suite* there is another bash script named: ``./suite``::
     LXC suites:
       dev synapse ...
 
-Mostly you will run the *suite* command by using one of the wrapper
-(`predefined suites`_).  To **install** the **dev suite** into
-a **archlinux** image use the ``./dev`` wrapper::
+Mostly you will run the *suite* command by using one of the wrapper (`predefined
+suites`_).  To **install** the **dev suite** into a **archlinux** image use the
+``./dev`` wrapper::
 
     $ ./dev archlinux create
 
@@ -140,6 +144,17 @@ Predefined suites
   - ptpython_ -- usage: ``./dev archlinux ptpython``
   - bash (``dev-user``) -- usage: ``./dev archlinux bash``
 
+  Alternatively you can use lxc_ command, to build all containers in once use::
+
+    LXC_ENV=./dev-env/suite.sh ./lxc build
+
+  and to install suite into all containers use::
+
+    LXC_ENV=./dev-env/suite.sh ./lxc install suite
+
+  To drop all containers of this suite use::
+
+    LXC_ENV=./dev-env/suite.sh ./lxc remove
 
 .. _synapse-py-req: https://github.com/return42/lxc-suite/blob/master/synapse-py-req.txt
 .. _synapse: https://github.com/matrix-org/synapse
@@ -155,6 +170,8 @@ Predefined suites
   - bash (``synapse``) -- usage: ``./dev archlinux bash``
 
 
+.. _jitsi projects: https://jitsi.org/projects/
+
 ``./jitsi`` : ubu2004, fedora31, archlinux
   Suite for developing within `jitsi projects`_, to create developer environment
   for your prefered distribution use one of::
@@ -163,8 +180,6 @@ Predefined suites
     ./dev archlinux fedora31 create
     ./dev archlinux archlinux create
 
-
-.. _jitsi projects: https://jitsi.org/projects/
 
 .. _create new suites:
 
@@ -227,6 +242,11 @@ If there comes the time you want to **get rid off all** the containers and
 
     $ ./lxc remove
     $ ./lxc remove images
+
+.. hint::
+
+   If FORCE_TIMEOUT_ environment is unset, the lxc command defaults to
+   FORCE_TIMEOUT=0 (suitable for batch processing)
 
 
 .. _Makefile:
@@ -297,6 +317,22 @@ This evaluates to::
     HOST                     --> echo "build OK" > build/status.txt
     container: dev-archlinux --> echo "build OK" > build/lxc-env/dev-archlinux/status.txt
 
+
+.. _FORCE_TIMEOUT:
+
+``FORCE_TIMEOUT``
+=================
+
+Scripts from the lxc-suites do often implement choices, asking you *do you want
+to do this or that?*.  Those selections do also implement a forced default
+answer.  To drive in real batch mode set environment to zero::
+
+  export FORCE_TIMEOUT=0
+
+which means that the default selection takes place after zero seconds.  Depends
+on your use cases you can also set 5 seconds or more to intervene at some
+points.  Unset (or empty) this environment to force a user interaction.  BTW: to
+be unset *is the default of FORCE_TIMEOUT* :)
 
 ----
 
