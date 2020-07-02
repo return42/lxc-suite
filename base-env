@@ -78,22 +78,23 @@ lxc_suite_info() {
     (
         lxc_set_suite_env
         echo
+        echo "IPs of container ${LXC_SUITE_IMAGE:-<image-name>}"
         for ip in $(global_IPs) ; do
             if [[ $ip =~ .*:.* ]]; then
-                echo "(${ip%|*}) IPv6:       http://[${ip#*|}]"
+                echo "  (${ip%|*}) IPv6: http://[${ip#*|}]"
             else
                 # IPv4:
                 # shellcheck disable=SC2034,SC2031
-                echo "(${ip%|*}) IPv4:       http://${ip#*|}"
+                echo "  (${ip%|*}) IPv4: http://${ip#*|}"
             fi
         done
         local cmd_prefix="./${LXC_SUITE_NAME:-./suite <suite-name>} ${LXC_SUITE_IMAGE:-<image-name>}"
         echo
         echo "Start a interactive bash (root) using::"
-        echo "    ${cmd_prefix} root"
+        echo "  ${cmd_prefix} root"
         echo
         echo "Start a interactive bash ($SERVICE_USER) using::"
-        echo "    ${cmd_prefix} bash"
+        echo "  ${cmd_prefix} bash"
     )
 }
 
