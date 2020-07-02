@@ -462,25 +462,64 @@ lxc_cmd() {
     done
 }
 
-lxc_exec_cmd() {
-    local name="$1"
+lxc_exec_in_container() {
+    local container="$1"
+    shift
+    local lxc_interactive="$1"
     shift
     exit_val=
-    info_msg "[${_BBlue}${name}${_creset}] ${_BGreen}export FORCE_TIMEOUT=$FORCE_TIMEOUT LXC_ENV=$LXC_ENV LXC_SUITE_IMAGE=$LXC_SUITE_IMAGE${_creset}"
-    info_msg "[${_BBlue}${name}${_creset}] ${_BGreen}${*}${_creset}"
-    lxc exec -t \
+    info_msg "[${_BBlue}${container}${_creset}] ${_BGreen}export FORCE_TIMEOUT=$FORCE_TIMEOUT LXC_ENV=$LXC_ENV LXC_SUITE_IMAGE=$LXC_SUITE_IMAGE${_creset}"
+    info_msg "[${_BBlue}${container}${_creset}] ${_BGreen}${*}${_creset}"
+    lxc exec "${container}" "${lxc_interactive}" \
         --env "FORCE_TIMEOUT=$FORCE_TIMEOUT" \
         --env "LXC_ENV=$LXC_ENV" \
         --env "LXC_SUITE_IMAGE=$LXC_SUITE_IMAGE" \
-        --cwd "${LXC_REPO_ROOT}" "${name}" \
-        -- bash -c "$*"
+        --cwd "${LXC_REPO_ROOT}" \
+        -- "$@"
     exit_val=$?
     if [[ $exit_val -ne 0 ]]; then
-        warn_msg "[${_BBlue}${name}${_creset}] exit code (${_BRed}${exit_val}${_creset}) from ${_BGreen}${*}${_creset}"
+        warn_msg "[${_BBlue}${container}${_creset}] exit code (${_BRed}${exit_val}${_creset}) from ${_BGreen}${*}${_creset}"
     else
-        info_msg "[${_BBlue}${name}${_creset}] exit code (${exit_val}) from ${_BGreen}${*}${_creset}"
+        info_msg "[${_BBlue}${container}${_creset}] exit code (${exit_val}) from ${_BGreen}${*}${_creset}"
     fi
 }
+
+lxc_exec_cmd() {
+    # usage: lxc_exec_cmd "$container" echo '$(hostname)'
+    local container="$1"
+    shift
+    lxc_exec_in_container "${container}" --force-interactive bash -c "$*"
+}
+
+lxc_exec_bash() {
+    # usage:
+    # tee_stderr 0.1 | lxc_exec_bash "$container" <<EOF
+    # echo \$(hostname)
+    # EOF
+    local container="$1"
+    shift
+    lxc_exec_in_container "${container}"  --force-noninteractive bash
+}
+
+lxc_prefix_cmd() {
+    # usage: lxc_prefix_cmd "$container" echo '$(hostname)'
+    local container="$1"
+    shift
+    lxc_exec_in_container "${container}" --force-interactive bash -c "$*" \
+                          | prefix_stdout "[${_BBlue}${container}${_creset}] "
+}
+
+lxc_prefix_bash() {
+    # usage:
+    # lxc_prefix_bash "$container" <<EOF
+    # echo \$(hostname)
+    # EOF
+    local container="$1"
+    shift
+    lxc_exec_in_container "${container}"  --force-noninteractive bash \
+                          | prefix_stdout "[${_BBlue}${container}${_creset}] "
+}
+
 
 lxc_exec() {
     for i in "${CONTAINERS[@]}"; do
