@@ -148,6 +148,15 @@ die_caller() {
     exit "${1-1}"
 }
 
+
+_pushd() {
+    pushd "$1" &>/dev/null || die_caller 43 "$1: No such file or directory"
+}
+
+_popd() {
+    popd &>/dev/null || die_caller 42 "directory stack empty"
+}
+
 err_msg()  { echo -e "${_BRed}ERROR:${_creset} $*" >&2; }
 warn_msg() { echo -e "${_BBlue}WARN:${_creset}  $*" >&2; }
 info_msg() { echo -e "${_BYellow}INFO:${_creset}  $*" >&2; }
