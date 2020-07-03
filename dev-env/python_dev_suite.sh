@@ -3,6 +3,8 @@
 # shellcheck shell=bash
 
 install_python_dev_suite(){
+    info_msg "prepare python developer environment"
+
     case $DIST_ID-$DIST_VERS in
         ubuntu-*|debian-*)
             pkg_install build-essential python3-dev \
@@ -21,9 +23,6 @@ install_python_dev_suite(){
             ;;
     esac
 
-    assert_user
-    wait_key
-
     create_pyenv
     wait_key
     info_msg "install developer tools .."
@@ -37,6 +36,5 @@ EOF
 }
 
 uninstall_python_dev_suite(){
-
-    userdel -r -f "${SERVICE_USER}" 2>&1 | prefix_stdout
+    true  # nothing to do
 }

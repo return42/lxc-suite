@@ -18,6 +18,7 @@ PUBLIC_URL="${PUBLIC_URL:-http://$(primary_ip)/$LXC_SUITE_NAME/}"
 
 # shellcheck disable=SC2034
 SUITE_FOLDER=$(dirname "${BASH_SOURCE[0]}")
+export TEMPLATES="${SUITE_FOLDER}/templates"
 
 # ----------------------------------------------------------------------------
 # This file is a LXC suite.  It is sourced from different context, do not
@@ -32,18 +33,40 @@ suite_install(){
     (
         # make re-install and remove any previous installation
         suite_uninstall
+        assert_user
+
+        case $DIST_ID-$DIST_VERS in
+            arch-*)
+                # shellcheck source=dev-env/archlinux_build_suite.sh
+                source "${SUITE_FOLDER}/archlinux_build_suite.sh"
+                install_archlinux_build_suite
+                ;;
+        esac
 
         # shellcheck source=dev-env/python_dev_suite.sh
         source "${SUITE_FOLDER}/python_dev_suite.sh"
         install_python_dev_suite
+
     )
 }
 
 suite_uninstall(){
     (
+
         # shellcheck source=dev-env/python_dev_suite.sh
         source "${SUITE_FOLDER}/python_dev_suite.sh"
         uninstall_python_dev_suite
+
+        case $DIST_ID-$DIST_VERS in
+            arch-*)
+                # shellcheck source=dev-env/archlinux_build_suite.sh
+                source "${SUITE_FOLDER}/archlinux_build_suite.sh"
+                uninstall_archlinux_build_suite
+                ;;
+        esac
+
+        userdel -r -f "${SERVICE_USER}" 2>&1 | prefix_stdout
+
     )
 }
 
@@ -118,6 +141,8 @@ apache_auth_pam() {
             ;;
         arch-*)
             chown -R http:http /share/WWW/
+            # shellcheck source=dev-env/archlinux_build_suite.sh
+            source "${SUITE_FOLDER}/archlinux_build_suite.sh"
             archlinux_mod_authnz_pam
             ;;
         fedora-*)
@@ -137,51 +162,6 @@ apache_auth_pam() {
     assert_pam_sugid_shadow
 }
 
-
-archlinux_mod_authnz_pam(){
-    # (archlinux) build & install apache mod_authnz_pam
-
-    # https://aur.archlinux.org/packages/mod_authnz_pam/
-    # git_clone "https://aur.archlinux.org/mod_authnz_pam.git" mod_authnz_pam
-    git_clone "https://github.com/return42/mod_authnz_pam.git" mod_authnz_pam
-
-    local user="${SUDO_USER:${USER}}"
-
-    rst_title "build mod_authnz_pam package"
-    echo
-    tee_stderr 0.1 <<EOF | sudo -H -u "$user" -i 2>&1 \
-        |  prefix_stdout "  ${_Yellow}|$user|${_creset} "
-rm mod_authnz_pam*.pkg.tar.xz
-makepkg -sf
-EOF
-    rst_title "install mod_authnz_pam package"
-    echo
-    cd "$CACHE/mod_authnz_pam" || die 42 "can't cd $CACHE/mod_authnz_pam"
-    pacman -U mod_authnz_pam*.pkg.tar.xz
-}
-
-
-archlinux_mod_authnz_pam(){
-    # (archlinux) build & install apache mod_authnz_pam
-
-    # https://aur.archlinux.org/packages/mod_authnz_pam/
-    # git_clone "https://aur.archlinux.org/mod_authnz_pam.git" mod_authnz_pam
-    git_clone "https://github.com/return42/mod_authnz_pam.git" mod_authnz_pam
-
-    cd "$CACHE/mod_authnz_pam" || die 42 "can't cd into $CACHE/mod_authnz_pam"
-
-    rst_title "build mod_authnz_pam package"
-    echo
-    tee_stderr 0.1 <<EOF | sudo -H -u "$user" -i 2>&1 \
-        |  prefix_stdout "  ${_Yellow}|$user|${_creset} "
-makepkg -s
-EOF
-    rst_title "install mod_authnz_pam package"
-    echo
-    pacman -U mod_authnz_pam*.pkg.tar.xz
-}
-
-
 # PAM
 # ---
 
@@ -191,14 +171,16 @@ assert_pam_sugid_shadow(){
             info_msg "$DIST_ID-$DIST_VERS supports PAM sguid 'shadow' (nothing to do)"
             ;;
         arch-*)
-            info_msg "$DIST_ID-$DIST_VERS adding PAM sguid 'shadow'"
-            groupadd --system searx
-            chgrp shadow /etc/gshadow
-            chgrp shadow /etc/shadow
-            chgrp shadow /sbin/unix_chkpwd
-            chmod 02755 /sbin/unix_chkpwd
-            chgrp shadow /sbin/pam_extrausers_chkpwd
-            chmod 02755 /sbin/pam_extrausers_chkpwd
+            info_msg "$DIST_ID: adding PAM sguid 'shadow'"
+            groupadd --system shadow
+            chgrp shadow  /etc/gshadow
+            chgrp shadow  /etc/shadow
+            chgrp shadow  /sbin/unix_chkpwd
+            chmod 02755   /sbin/unix_chkpwd
+            if [[ -e /sbin/pam_extrausers_chkpwd ]]; then
+                chgrp shadow  /sbin/pam_extrausers_chkpwd
+                chmod 02755   /sbin/pam_extrausers_chkpwd
+            fi
             ;;
         fedora-*)
             warn_msg "$DIST_ID-$DIST_VERS: PAM sguid 'shadow' not yet tested!?!?"
