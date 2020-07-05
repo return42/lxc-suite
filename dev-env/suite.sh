@@ -36,10 +36,26 @@ suite_install(){
         assert_user
 
         case $DIST_ID-$DIST_VERS in
+            ubuntu-*|debian-*)
+                pkg_install build-essential python3-dev \
+                            python3-pip python3-setuptools python3-venv \
+                            emacs-nox
+                ;;
             arch-*)
+                pkg_install base-devel python python-pip \
+                            python-setuptools python-virtualenv \
+                            emacs-nox
                 # shellcheck source=dev-env/archlinux_build_suite.sh
                 source "${SUITE_FOLDER}/archlinux_build_suite.sh"
                 install_archlinux_build_suite
+                ;;
+            fedora-*)
+                pkg_install python3-virtualenv \
+                            emacs-nox
+                dnf groupinstall -y "Development Tools"
+                ;;
+            *)
+                die 42 "$DIST_ID-$DIST_VERS: not yet implemented"
                 ;;
         esac
 
@@ -102,6 +118,7 @@ suite_commands() {
                     "$container" "${LXC_REPO_ROOT}/utils/lxc.sh" \
                     __show suite 2>/dev/null
             fi
+            # FIXME: this has to be called inside the container
             apache_auth_pam_doc
             ;;
         apache_auth_pam)
@@ -127,10 +144,11 @@ apache_auth_pam() {
     fi
 
     info_msg "create share folders in /share/WWW"
-    mkdir -p /share/WWW/public-share
-    mkdir -p /share/WWW/closed-share
-    echo "This is a public share." > /share/WWW/public-share/README
-    echo "This is a closed share, available to logined users." > /share/WWW/README
+    mkdir -p /share/WWW/public
+    mkdir -p /share/WWW/closed
+    echo "This is a public share." > /share/WWW/public/README
+    echo "This is a closed share, users need to be logined." > /share/WWW/closed/README
+
     case $DIST_ID-$DIST_VERS in
         ubuntu-*|debian-*)
             chown -R www-data:www-data /share/WWW/

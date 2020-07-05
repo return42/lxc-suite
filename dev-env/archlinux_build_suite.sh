@@ -5,8 +5,6 @@
 install_archlinux_build_suite(){
     local BUILD_FOLDER="${SERVICE_HOME}/build"
 
-    pkg_install base-devel
-
     # In containers, we only have a root login, but 'makepkg' can't be
     # executed by root. 'makepkg' needs a build user with sudo rights and this
     # is where alle this hacking beginns:
