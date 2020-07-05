@@ -14,7 +14,7 @@ SERVICE_GROUP="${SERVICE_USER}"
 SERVICE_PYENV="${SERVICE_HOME}/pyenv"
 
 LXC_SUITE_NAME="dev"
-PUBLIC_URL="${PUBLIC_URL:-http://$(primary_ip)/$LXC_SUITE_NAME/}"
+PUBLIC_URL="${PUBLIC_URL:-http://$(primary_ip)/}"
 
 # shellcheck disable=SC2034
 SUITE_FOLDER=$(dirname "${BASH_SOURCE[0]}")
@@ -97,14 +97,36 @@ apache_auth_pam: create HTTP share using mod_authnz_pam
 EOF
 }
 
-apache_auth_pam_doc() {
-    rst_title "cmd apache_auth_pam" section
-    cat <<EOF
+lxc_suite_info() {
+    (
+        lxc_set_suite_env
+        echo
+        echo "IPs of container ${LXC_SUITE_IMAGE:-<image-name>}"
+        for ip in $(global_IPs) ; do
+            if [[ $ip =~ .*:.* ]]; then
+                echo "  (${ip%|*}) IPv6: http://[${ip#*|}]"
+            else
+                # IPv4:
+                # shellcheck disable=SC2034,SC2031
+                echo "  (${ip%|*}) IPv4: http://${ip#*|}"
+            fi
+        done
+        local cmd_prefix="./${LXC_SUITE_NAME:-./suite <suite-name>} ${LXC_SUITE_IMAGE:-<image-name>}"
+        echo
+        echo "Start a interactive bash (root) using::"
+        echo "  ${cmd_prefix} root"
+        echo
+        echo "Start a interactive bash ($SERVICE_USER) using::"
+        echo "  ${cmd_prefix} bash"
+
+        rst_title "cmd apache_auth_pam" section
+        cat <<EOF
 
 HTTP share using mod_authnz_pam
   - ${PUBLIC_URL}public
   - ${PUBLIC_URL}closed
 EOF
+    )
 }
 
 
@@ -118,8 +140,6 @@ suite_commands() {
                     "$container" "${LXC_REPO_ROOT}/utils/lxc.sh" \
                     __show suite 2>/dev/null
             fi
-            # FIXME: this has to be called inside the container
-            apache_auth_pam_doc
             ;;
         apache_auth_pam)
             # this command has to be executed in the conatiner
@@ -133,6 +153,13 @@ suite_commands() {
             __suite_commands "$@"
             ;;
     esac
+}
+
+
+create_user_account() {
+    rst_title "create account: 'user'" section
+    useradd -m user || return
+    passwd user
 }
 
 
@@ -178,6 +205,8 @@ apache_auth_pam() {
     info_msg "install apache exp-imp.conf"
     apache_install_site --no-eval exp-imp.conf
     assert_pam_sugid_shadow
+
+    create_user_account
 }
 
 # PAM
