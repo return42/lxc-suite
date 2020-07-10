@@ -132,57 +132,81 @@ running on the HOST system::
 Predefined suites
 =================
 
+``./dev`` : ubu2004, fedora31, archlinux
+-----------------------------------------
+
 .. _dev-py-req: https://github.com/return42/lxc-suite/blob/master/dev-py-req.txt
 .. _ptpython: https://github.com/prompt-toolkit/ptpython
 
-``./dev`` : ubu2004, fedora31, archlinux
-  Suite that assembles a developer environment, useful as template or for
-  DevOps prototyping.::
+Suite that assembles a developer environment, useful as template or for
+DevOps prototyping.::
 
-    ./dev archlinux create
+  ./dev archlinux create
 
-  Creates system account ``dev-user`` and builds a python virtualenv
-  ``~/dev-user/pyenv`` with requirements dev-py-req_ installed .
+Creates system account ``dev-user`` and builds a python virtualenv
+``~/dev-user/pyenv`` with requirements dev-py-req_ installed .
 
-  - ptpython_ -- usage: ``./dev archlinux ptpython``
-  - bash (``dev-user``) -- usage: ``./dev archlinux bash``
+- ptpython_ -- usage: ``./dev archlinux ptpython``
+- bash (``dev-user``) -- usage: ``./dev archlinux bash``
 
-  Alternatively you can use lxc_ command, to build all containers in once use::
+Alternatively you can use lxc_ command, to build all containers in once use::
 
-    LXC_ENV=./dev-env/suite.sh ./lxc build
+  LXC_ENV=./dev-env/suite.sh ./lxc build
 
-  and to install suite into all containers use::
+and to install suite into all containers use::
 
-    LXC_ENV=./dev-env/suite.sh ./lxc install suite
+  LXC_ENV=./dev-env/suite.sh ./lxc install suite
 
-  To drop all containers of this suite use::
+To drop all containers of this suite use::
 
-    LXC_ENV=./dev-env/suite.sh ./lxc remove
+  LXC_ENV=./dev-env/suite.sh ./lxc remove
+
+``./synapse`` : archlinux
+-------------------------
 
 .. _synapse-py-req: https://github.com/return42/lxc-suite/blob/master/synapse-py-req.txt
 .. _synapse: https://github.com/matrix-org/synapse
 
-``./synapse`` : archlinux
-  Suite for prototyping with a synapse_ *homeserver*.::
+Suite for prototyping with a synapse_ *homeserver*.::
 
-    ./dev archlinux create
+  ./dev archlinux create
 
-  Creates system account ``synapse`` and builds a python virtualenv
-  ``~/synapse/pyenv`` with requirements from synapse-py-req_ installed.
+Creates system account ``synapse`` and builds a python virtualenv
+``~/synapse/pyenv`` with requirements from synapse-py-req_ installed.
 
-  - bash (``synapse``) -- usage: ``./dev archlinux bash``
+- bash (``synapse``) -- usage: ``./dev archlinux bash``
 
+
+``./jitsi`` : ubu2004, fedora31, archlinux
+------------------------------------------
 
 .. _jitsi projects: https://jitsi.org/projects/
 
-``./jitsi`` : ubu2004, fedora31, archlinux
-  Suite for developing within `jitsi projects`_, to create developer environment
-  for your prefered distribution use one of::
+Suite for developing within `jitsi projects`_, to create developer environment
+for your prefered distribution use one of::
 
-    ./dev archlinux ubu2004 create
-    ./dev archlinux fedora31 create
-    ./dev archlinux archlinux create
+  ./dev archlinux ubu2004 create
+  ./dev archlinux fedora31 create
+  ./dev archlinux archlinux create
 
+``mod-authnz-pam`` : archlinux
+------------------------------
+
+.. _mod_authnz_pam: https://github.com/adelton/mod_authnz_pam
+
+Suite to test mod_authnz_pam_::
+
+  Apache module mod_authnz_pam serves as PAM authorization module,
+  supplementing authentication done by other modules, for example
+  mod_auth_kerb. It can also be used as a full Basic Authentication
+  provider for testing purposes, running the [login, password]
+  authentication through the PAM stack.
+
+I had some `issues <https://github.com/adelton/mod_authnz_pam/issues/12>` with
+mod_authnz_pam, so I implemented this small suite to run some tests, usage::
+
+  ./mod-authnz-pam archlinux create
+  ./mod-authnz-pam archlinux -- test
 
 .. _create new suites:
 

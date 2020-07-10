@@ -201,9 +201,11 @@ suite_main() {
             ;;
         --)
             shift
-            if ! lxc_exists "$container"; then
-                warn_msg "container does not extsts: $container"
-                LXC_SUITE_IMAGE='<suite-image>'
+            if ! in_container; then
+                if ! lxc_exists "$container"; then
+                    warn_msg "container ** $container ** does not yet exists"
+                    LXC_SUITE_IMAGE='<suite-image>'
+                fi
             fi
             suite_commands "$@"
             ;;

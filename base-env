@@ -74,10 +74,8 @@ lxc_suite_uninstall() {
     )
 }
 
-lxc_suite_info() {
-    (
-        lxc_set_suite_env
-        echo
+
+__lxc_suite_info() {
         echo "IPs of container ${LXC_SUITE_IMAGE:-<image-name>}"
         for ip in $(global_IPs) ; do
             if [[ $ip =~ .*:.* ]]; then
@@ -89,14 +87,20 @@ lxc_suite_info() {
             fi
         done
         local cmd_prefix="./${LXC_SUITE_NAME:-./suite <suite-name>} ${LXC_SUITE_IMAGE:-<image-name>}"
-        echo
-        echo "Start a interactive bash (root) using::"
-        echo "  ${cmd_prefix} root"
-        echo
-        echo "Start a interactive bash ($SERVICE_USER) using::"
-        echo "  ${cmd_prefix} bash"
+        cat <<EOF
+Start a interactive bash (root or $SERVICE_USER) using::
+  ${cmd_prefix} root
+  ${cmd_prefix} bash
+EOF
+}
+
+lxc_suite_info() {
+    (
+        lxc_set_suite_env
+        __lxc_suite_info
     )
 }
+
 
 assert_user() {
     (
@@ -105,7 +109,7 @@ assert_user() {
         suite_root_shell <<EOF
 useradd --shell /bin/bash --system \
  --home-dir "$SERVICE_HOME" \
- --comment 'Privacy-respecting metasearch engine' $SERVICE_USER
+ $SERVICE_USER
 mkdir "$SERVICE_HOME"
 chown -R "$SERVICE_GROUP:$SERVICE_GROUP" "$SERVICE_HOME"
 groups $SERVICE_USER
@@ -200,10 +204,15 @@ suite_commands_usage() {
     _cmd="./${LXC_SUITE_NAME} ${LXC_SUITE_IMAGE}"
     cat <<EOF
 usage:
-  $_cmd -- [docs]
+  $_cmd -- [docs|test]
 
 docs:  print documentation of the suite
+test: run some tests in the container
 EOF
+}
+
+suite_test() {
+    echo "nothing to test"
 }
 
 __suite_commands() {
@@ -213,10 +222,20 @@ __suite_commands() {
             [[ $LXC_SUITE_IMAGE == '<suite-image>' ]] \
                 && die 42 "container does not exists"
             rst_title "services of $container"
+            echo
             lxc_exec_cmd \
                 "$container" "${LXC_REPO_ROOT}/utils/lxc.sh" \
                 __show suite 2>/dev/null
             ;;
+        test)
+            # this command has to be executed in the conatiner
+            if ! in_container; then
+                lxc_exec_cmd "$container" "./${LXC_SUITE_NAME} ${LXC_SUITE_IMAGE}" -- test
+            else
+                suite_test
+            fi
+            ;;
+
         *)
             suite_commands_usage
             if [[ -z "$*" ]]; then

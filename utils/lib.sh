@@ -41,7 +41,7 @@ DOT_CONFIG="${DOT_CONFIG:-${REPO_ROOT}/.config.sh}"
 
 source_dot_config() {
     if [[ ! -e "${DOT_CONFIG}" ]]; then
-        err_msg "configuration does not extsts at: ${DOT_CONFIG}"
+        err_msg "configuration does not exists at: ${DOT_CONFIG}"
         return 42
     fi
     # shellcheck disable=SC1090
@@ -859,18 +859,21 @@ apache_distro_setup() {
             APACHE_SITES_ENABLED="/etc/apache2/sites-enabled"
             APACHE_MODULES="/usr/lib/apache2/modules"
             APACHE_PACKAGES="apache2"
+            APACHE_SERVICE_USER="www-data"
             ;;
         arch-*)
             APACHE_SITES_AVAILABLE="/etc/httpd/sites-available"
             APACHE_SITES_ENABLED="/etc/httpd/sites-enabled"
             APACHE_MODULES="modules"
             APACHE_PACKAGES="apache"
+            APACHE_SERVICE_USER="http"
             ;;
         fedora-*)
             APACHE_SITES_AVAILABLE="/etc/httpd/sites-available"
             APACHE_SITES_ENABLED="/etc/httpd/sites-enabled"
             APACHE_MODULES="modules"
             APACHE_PACKAGES="httpd"
+            APACHE_SERVICE_USER="http"
             ;;
         *)
             err_msg "$DIST_ID-$DIST_VERS: apache not yet implemented"
@@ -882,7 +885,9 @@ apache_distro_setup
 
 install_apache(){
     info_msg "installing apache ..."
-    pkg_install "$APACHE_PACKAGES"
+    if ! pkg_is_installed; then
+        pkg_install "$APACHE_PACKAGES"
+    fi
     case $DIST_ID-$DIST_VERS in
         arch-*|fedora-*)
             if ! grep "IncludeOptional sites-enabled" "/etc/httpd/conf/httpd.conf"; then
