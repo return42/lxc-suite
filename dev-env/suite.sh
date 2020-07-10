@@ -189,6 +189,7 @@ apache_auth_pam() {
             # shellcheck source=dev-env/archlinux_build_suite.sh
             source "${SUITE_FOLDER}/archlinux_build_suite.sh"
             archlinux_mod_authnz_pam
+            archlinux_pamtester
             ;;
         fedora-*)
             chown -R www-data:www-data /share/WWW/
@@ -219,9 +220,14 @@ assert_pam_sugid_shadow(){
             ;;
         arch-*)
             info_msg "$DIST_ID: adding PAM sguid 'shadow'"
+
             groupadd --system shadow
             chgrp shadow  /etc/gshadow
+            chmod g+r /etc/gshadow
             chgrp shadow  /etc/shadow
+            chmod g+r /etc/shadow
+
+            # set-group-ID bit
             chgrp shadow  /sbin/unix_chkpwd
             chmod 02755   /sbin/unix_chkpwd
             if [[ -e /sbin/pam_extrausers_chkpwd ]]; then

@@ -32,15 +32,35 @@ archlinux_mod_authnz_pam(){
     local BUILD_FOLDER="${SERVICE_HOME}/build/mod_authnz_pam"
     git_clone "https://github.com/return42/mod_authnz_pam.git" \
               "${BUILD_FOLDER}" master "${SERVICE_USER}"
-    rst_title "build mod_authnz_pam package"
+    rst_title "build package: mod_authnz_pam" section
     echo
     tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1
 cd "${BUILD_FOLDER}"
-makepkg -s
+makepkg -sf
 EOF
     wait_key
-    rst_title "install mod_authnz_pam package"
+    rst_title "install package: mod_authnz_pam" section
     _pushd "${BUILD_FOLDER}"
     pacman -U mod_authnz_pam*.pkg.tar.xz
+    _popd
+}
+
+
+archlinux_pamtester(){
+    # (archlinux) build & install apache pamtester
+
+    local BUILD_FOLDER="${SERVICE_HOME}/build/pamtester"
+    git_clone "https://aur.archlinux.org/pamtester.git" \
+              "${BUILD_FOLDER}" master "${SERVICE_USER}"
+    rst_title "build package: pamtester" section
+    echo
+    tee_stderr 0.1 <<EOF | sudo -H -u "${SERVICE_USER}" -i 2>&1
+cd "${BUILD_FOLDER}"
+makepkg -sf
+EOF
+    wait_key
+    rst_title "install package: pamtester" section
+    _pushd "${BUILD_FOLDER}"
+    pacman -U pamtester-*.pkg.tar.xz
     _popd
 }
