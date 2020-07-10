@@ -189,7 +189,7 @@ for your prefered distribution use one of::
   ./dev archlinux fedora31 create
   ./dev archlinux archlinux create
 
-``mod-authnz-pam`` : archlinux
+``./mod-authnz-pam`` : archlinux
 ------------------------------
 
 .. _mod_authnz_pam: https://github.com/adelton/mod_authnz_pam
@@ -202,8 +202,8 @@ Suite to test mod_authnz_pam_::
   provider for testing purposes, running the [login, password]
   authentication through the PAM stack.
 
-I had some `issues <https://github.com/adelton/mod_authnz_pam/issues/12>` with
-mod_authnz_pam, so I implemented this small suite to run some tests, usage::
+I had an `issue <https://github.com/adelton/mod_authnz_pam/issues/12>`_ with
+mod_authnz_pam_, so I implemented this small suite to run some tests / usage::
 
   ./mod-authnz-pam archlinux create
   ./mod-authnz-pam archlinux -- test
