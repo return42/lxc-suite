@@ -9,7 +9,7 @@
 |lxc-suite logo|
 
 **LXC suites** helps you to organize your basic development and build tasks in
-**L**\ inu\ **X** **C**\ ontainers / written in pure bash, except lxd no
+**L**\ inu\ **X** **C**\ ontainers / written in pure bash, except LXD_ no
 knick-knack is needed :)
 
 |License| |Issues|  |PR|  |commits|
@@ -230,6 +230,11 @@ if your suite does not need such a requirements file.
 ``./lxc``
 =========
 
+.. hint::
+
+   This is about ``./lxc`` from *LXC suites*, please do not confuse it with
+   the original command ``lxc`` from the LXD (see `LXD cheat sheet`_).
+
 For usage run::
 
     ./lxc --help
@@ -360,6 +365,30 @@ which means that the default selection takes place after zero seconds.  Depends
 on your use cases you can also set 5 seconds or more to intervene at some
 points.  Unset (or empty) this environment to force a user interaction.  BTW: to
 be unset *is the default of FORCE_TIMEOUT* :)
+
+----
+
+.. _LXD cheat sheet:
+
+LXD cheat sheet
+===============
+
+.. _LXD: https://linuxcontainers.org/lxd/docs/master/
+.. _nsenter: https://man7.org/linux/man-pages/man1/nsenter.1.html
+
+
+``lxd --version``
+  LXD version
+
+``lxc remote list``
+  List installed image servers
+
+``lxc image list`` / ``lxc image list local:``
+  List (local) cached images.
+
+``lxc image list images: amd64``
+  List images available on server ``images:`` filtered by ``amd64``.
+
 
 ----
 
