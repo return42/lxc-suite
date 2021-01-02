@@ -389,6 +389,21 @@ LXD cheat sheet
 ``lxc image list images: amd64``
   List images available on server ``images:`` filtered by ``amd64``.
 
+Create new storage named *pool* using an existing directory
+``/fast-volume/lxd-pool`` (driver: ``dir``)::
+
+    sudo -H mkdir /fast-volume/lxd-pool
+    sudo -H lxc storage create pool dir source=/fast-volume/lxd-pool
+
+    sudo -H lxc storage list
+    +---------+-------------+--------+------------------------------------------------+---------+
+    |  NAME   | DESCRIPTION | DRIVER |                     SOURCE                     | USED BY |
+    +---------+-------------+--------+------------------------------------------------+---------+
+    | default |             | dir    | /var/snap/lxd/common/lxd/storage-pools/default | 8       |
+    +---------+-------------+--------+------------------------------------------------+---------+
+    | pool    |             | dir    | /fast-volume/lxd-pools                         | 0       |
+    +---------+-------------+--------+------------------------------------------------+---------+
+
 
 ----
 
